@@ -27,6 +27,7 @@ lint: tools.verify.golangci-lint
 ## test: Run unit test.
 .PHONY: test
 test:
+	@-mkdir -p $(OUTPUT_DIR)
 	go test -race -cover -coverprofile=$(OUTPUT_DIR)/coverage.out ./...
 
 ## cover: Run unit test and get test coverage.
