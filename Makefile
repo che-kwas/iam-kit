@@ -3,7 +3,6 @@
 # ==============================================================================
 # Build options
 
-OUTPUT_DIR   := ./_output
 MAKEFLAGS    += --no-print-directory
 
 # ==============================================================================
@@ -16,7 +15,7 @@ include make-rules/tools.mk
 
 ## all: Build all.
 .PHONY: all
-all: tools lint test
+all: lint gen test
 
 ## lint: Check syntax and styling of go sources.
 .PHONY: lint
@@ -24,27 +23,27 @@ lint: tools.verify.golangci-lint
 	go mod tidy -compat=1.17
 	golangci-lint run ./...
 
+## gen: Generate error code and document.
+.PHONY: gen
+gen: tools.verify.codegen
+	codegen ./errcode
+	codegen -doc -output ./error_code_base.md ./errcode
+
 ## test: Run unit test.
 .PHONY: test
 test:
-	@-mkdir -p $(OUTPUT_DIR)
-	go test -race -cover -coverprofile=$(OUTPUT_DIR)/coverage.out ./...
+	go test -race -cover -coverprofile=coverage.out ./...
 
 ## cover: Run unit test and get test coverage.
 .PHONY: cover
 cover: test
-	sed -i '/.*_mock.go/d' $(OUTPUT_DIR)/coverage.out
-	go tool cover -html=$(OUTPUT_DIR)/coverage.out -o $(OUTPUT_DIR)/coverage.html
+	sed -i '/mock_.*.go/d' coverage.out
+	go tool cover -html=coverage.out -o coverage.html
 
 ## clean: Remove all files that are created by building.
 .PHONY: clean
 clean:
-	-rm -vrf $(OUTPUT_DIR)
-
-## tools: Install dependent tools.
-.PHONY: tools
-tools:
-	make tools.verify
+	-rm -vrf coverage.*
 
 ## help: Show help info.
 .PHONY: help
