@@ -32,7 +32,7 @@ const (
 	RouterProfiling = "/debug/pprof"
 )
 
-// HTTPServerBuilder can build an HTTPServer.
+// HTTPServerBuilder defines options for building an HTTPServer.
 type HTTPServerBuilder struct {
 	Mode        string
 	Address     string

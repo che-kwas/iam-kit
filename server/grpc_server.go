@@ -15,7 +15,7 @@ const (
 	DefaultGRPCMaxMsgSize = 4 * 1024 * 1024
 )
 
-// GRPCServerBuilder can build an GRPCServer.
+// GRPCServerBuilder defines options for building a GRPCServer.
 type GRPCServerBuilder struct {
 	Address    string
 	MaxMsgSize int `mapstructure:"max-msg-size"`
