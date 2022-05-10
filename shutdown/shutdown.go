@@ -2,13 +2,12 @@ package shutdown
 
 import (
 	"context"
+	"log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
-
-	"github.com/marmotedu/iam/pkg/log"
 )
 
 // ShutdownCallback is an interface you have to implement for callbacks.

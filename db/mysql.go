@@ -29,7 +29,9 @@ type DBBuilder struct {
 	MaxOpenConnections    int    `mapstructure:"max-open-connections"`
 	MaxConnectionLifeTime string `mapstructure:"max-connection-life-time"`
 
-	err error
+	db              *gorm.DB
+	maxConnLifeTime time.Duration
+	err             error
 }
 
 // NewDBBuilder is used to build a db instance.
@@ -42,19 +44,24 @@ func NewDBBuilder() *DBBuilder {
 	}
 
 	b.err = viper.UnmarshalKey(ConfigDBKey, b)
+	if b.err != nil {
+		return b
+	}
+
+	b.maxConnLifeTime, b.err = time.ParseDuration(b.MaxConnectionLifeTime)
 	return b
 }
 
 // Build builds a gorm db instance.
 func (b *DBBuilder) Build() (*gorm.DB, error) {
-	if b.err != nil {
-		return nil, b.err
-	}
+	b.openDB().setOptions()
 
-	var maxConnLifeTime time.Duration
-	maxConnLifeTime, b.err = time.ParseDuration(b.MaxConnectionLifeTime)
+	return b.db, b.err
+}
+
+func (b *DBBuilder) openDB() *DBBuilder {
 	if b.err != nil {
-		return nil, b.err
+		return b
 	}
 
 	dsn := fmt.Sprintf(`%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true&loc=Local`,
@@ -63,21 +70,22 @@ func (b *DBBuilder) Build() (*gorm.DB, error) {
 		b.Host,
 		b.Database)
 
-	var db *gorm.DB
-	db, b.err = gorm.Open(mysql.Open(dsn))
+	b.db, b.err = gorm.Open(mysql.Open(dsn))
+	return b
+}
+
+func (b *DBBuilder) setOptions() {
 	if b.err != nil {
-		return nil, b.err
+		return
 	}
 
 	var sqlDB *sql.DB
-	sqlDB, b.err = db.DB()
+	sqlDB, b.err = b.db.DB()
 	if b.err != nil {
-		return nil, b.err
+		return
 	}
 
 	sqlDB.SetMaxOpenConns(b.MaxOpenConnections)
-	sqlDB.SetConnMaxLifetime(maxConnLifeTime)
+	sqlDB.SetConnMaxLifetime(b.maxConnLifeTime)
 	sqlDB.SetMaxIdleConns(b.MaxIdleConnections)
-
-	return db, nil
 }
