@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
+	"github.com/marmotedu/iam/pkg/log"
 	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 

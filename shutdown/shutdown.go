@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/marmotedu/iam/pkg/log"
 )
 
 // ShutdownCallback is an interface you have to implement for callbacks.

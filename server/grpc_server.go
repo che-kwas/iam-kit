@@ -4,7 +4,7 @@ import (
 	"context"
 	"net"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/marmotedu/iam/pkg/log"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 )
