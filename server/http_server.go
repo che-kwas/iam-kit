@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/che-kwas/iam-kit/util"
+	"github.com/che-kwas/iam-kit/util/httputil"
 )
 
 const (
@@ -146,7 +146,7 @@ func (s *HTTPServer) setupMiddlewares() {}
 func (s *HTTPServer) setupAPIs() {
 	if s.healthz {
 		s.GET(RouterHealthz, func(c *gin.Context) {
-			util.WriteResponse(c, nil, map[string]string{"status": "OK"})
+			httputil.WriteResponse(c, nil, map[string]string{"status": "OK"})
 		})
 	}
 

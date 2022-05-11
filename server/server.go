@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/che-kwas/iam-kit/config"
 	"github.com/che-kwas/iam-kit/shutdown"
-	"github.com/che-kwas/iam-kit/util"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 )
@@ -38,7 +38,7 @@ func NewServer(name string, cfgFile string) (*Server, error) {
 func (s *Server) loadConfig(cfgFile string, name string) *Server {
 	cfgName := fmt.Sprintf("%s.yaml", name)
 
-	s.err = util.LoadConfig(cfgFile, cfgName)
+	s.err = config.LoadConfig(cfgFile, cfgName)
 	return s
 }
 

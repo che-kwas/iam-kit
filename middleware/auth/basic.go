@@ -9,7 +9,7 @@ import (
 
 	"github.com/che-kwas/iam-kit/errcode"
 	"github.com/che-kwas/iam-kit/middleware"
-	"github.com/che-kwas/iam-kit/util"
+	"github.com/che-kwas/iam-kit/util/httputil"
 )
 
 // BasicStrategy defines Basic authentication strategy.
@@ -32,7 +32,7 @@ func (b BasicStrategy) AuthFunc() gin.HandlerFunc {
 		auth := strings.SplitN(c.Request.Header.Get("Authorization"), " ", 2)
 
 		if len(auth) != 2 || auth[0] != "Basic" {
-			util.WriteResponse(
+			httputil.WriteResponse(
 				c,
 				errors.WithCode(errcode.ErrHeaderInvalid, "Authorization header is invalid."),
 				nil,
@@ -46,7 +46,7 @@ func (b BasicStrategy) AuthFunc() gin.HandlerFunc {
 		pair := strings.SplitN(string(payload), ":", 2)
 
 		if len(pair) != 2 || !b.compare(pair[0], pair[1]) {
-			util.WriteResponse(
+			httputil.WriteResponse(
 				c,
 				errors.WithCode(errcode.ErrHeaderInvalid, "Authorization header is invalid."),
 				nil,

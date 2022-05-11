@@ -8,7 +8,7 @@ import (
 
 	"github.com/che-kwas/iam-kit/errcode"
 	"github.com/che-kwas/iam-kit/middleware"
-	"github.com/che-kwas/iam-kit/util"
+	"github.com/che-kwas/iam-kit/util/httputil"
 )
 
 const authHeaderCount = 2
@@ -37,7 +37,7 @@ func (a AutoStrategy) AuthFunc() gin.HandlerFunc {
 		authHeader := strings.SplitN(c.Request.Header.Get("Authorization"), " ", 2)
 
 		if len(authHeader) != authHeaderCount {
-			util.WriteResponse(
+			httputil.WriteResponse(
 				c,
 				errors.WithCode(errcode.ErrHeaderInvalid, "Authorization header is invalid."),
 				nil,
@@ -53,7 +53,7 @@ func (a AutoStrategy) AuthFunc() gin.HandlerFunc {
 		case "Bearer":
 			operator.SetStrategy(a.jwt)
 		default:
-			util.WriteResponse(c, errors.WithCode(errcode.ErrHeaderInvalid, "Authorization header is invalid."), nil)
+			httputil.WriteResponse(c, errors.WithCode(errcode.ErrHeaderInvalid, "Authorization header is invalid."), nil)
 			c.Abort()
 
 			return
