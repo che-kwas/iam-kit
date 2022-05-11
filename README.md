@@ -17,3 +17,20 @@
 2. iam-apiserver：`11XXYY`
 3. iam-authz-server：`12XXYY`
 4. iam-pump：`13XXYY`
+
+## TODO
+
+1. init最佳实践
+2. config最佳实践
+  - load config独立出来，不只是server需要load
+3. errors最佳实践
+4. logger最佳实践
+  - withValues
+  - WithContext
+  - FromContext
+  - global singleton
+  - L()
+5. mysql logger
+6. test
+7. policy audit
+8. migrate

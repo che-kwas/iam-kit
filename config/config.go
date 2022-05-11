@@ -1,4 +1,4 @@
-package util
+package config
 
 import (
 	"errors"
@@ -14,9 +14,9 @@ var (
 )
 
 // LoadConfig loads config from file and ENV variables if set.
-func LoadConfig(cfgPath string, cfgName string) error {
-	log.Debugf("Loading config, cfgPath = %s, cfgName = %s", cfgPath, cfgName)
-	if cfgPath == "" && cfgName == "" {
+func LoadConfig(cfgPath string, appName string) error {
+	log.Infof("Loading config, cfgPath = %s, appName = %s", cfgPath, appName)
+	if cfgPath == "" && appName == "" {
 		return errors.New("no configuration file specified")
 	}
 
@@ -27,7 +27,7 @@ func LoadConfig(cfgPath string, cfgName string) error {
 			viper.AddConfigPath(path)
 		}
 
-		viper.SetConfigFile(cfgName)
+		viper.SetConfigFile(appName)
 	}
 	viper.SetConfigType("yaml")
 
