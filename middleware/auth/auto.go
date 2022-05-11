@@ -7,8 +7,8 @@ import (
 	"github.com/marmotedu/errors"
 
 	"github.com/che-kwas/iam-kit/errcode"
+	"github.com/che-kwas/iam-kit/httputil"
 	"github.com/che-kwas/iam-kit/middleware"
-	"github.com/che-kwas/iam-kit/util/httputil"
 )
 
 const authHeaderCount = 2

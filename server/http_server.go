@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/che-kwas/iam-kit/util/httputil"
+	"github.com/che-kwas/iam-kit/httputil"
 )
 
 const (
