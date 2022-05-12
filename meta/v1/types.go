@@ -128,8 +128,8 @@ type ListOptions struct {
 	TypeMeta `json:",inline"`
 
 	// Offset specify the number of records to skip before starting to return the records.
-	Offset *int64 `json:"offset,omitempty"`
+	Offset *int `json:"offset,omitempty"`
 
 	// Limit specify the number of records to be retrieved.
-	Limit *int64 `json:"limit,omitempty"`
+	Limit *int `json:"limit,omitempty"`
 }

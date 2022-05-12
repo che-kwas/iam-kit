@@ -7,14 +7,14 @@ const (
 
 // OffsetLimit is used to retrieve the records in the db by page.
 type OffsetLimit struct {
-	Offset int64
-	Limit  int64
+	Offset int
+	Limit  int
 }
 
 // NewOffsetLimit uses offset/DefaultOffset and limit/DefaultLimit
 // to generate an OffsetLimit.
-func NewOffsetLimit(offset *int64, limit *int64) *OffsetLimit {
-	var o, l int64 = DefaultOffset, DefaultLimit
+func NewOffsetLimit(offset *int, limit *int) *OffsetLimit {
+	var o, l int = DefaultOffset, DefaultLimit
 
 	if offset != nil {
 		o = *offset

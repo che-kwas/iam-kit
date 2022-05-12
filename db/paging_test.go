@@ -11,8 +11,8 @@ func TestNewOffsetLimit(t *testing.T) {
 	assert := assert.New(t)
 
 	type args struct {
-		offset *int64
-		limit  *int64
+		offset *int
+		limit  *int
 	}
 	tests := []struct {
 		name string
@@ -22,8 +22,8 @@ func TestNewOffsetLimit(t *testing.T) {
 		{
 			name: "both offset and limit are not nil",
 			args: args{
-				offset: pointer.ToInt64(0),
-				limit:  pointer.ToInt64(10),
+				offset: pointer.ToInt(0),
+				limit:  pointer.ToInt(10),
 			},
 			want: &OffsetLimit{
 				Offset: 0,
@@ -40,7 +40,7 @@ func TestNewOffsetLimit(t *testing.T) {
 		{
 			name: "offset not nil and limit nil",
 			args: args{
-				offset: pointer.ToInt64(2),
+				offset: pointer.ToInt(2),
 			},
 			want: &OffsetLimit{
 				Offset: 2,
@@ -50,7 +50,7 @@ func TestNewOffsetLimit(t *testing.T) {
 		{
 			name: "offset nil and limit not nil",
 			args: args{
-				limit: pointer.ToInt64(10),
+				limit: pointer.ToInt(10),
 			},
 			want: &OffsetLimit{
 				Offset: 0,
