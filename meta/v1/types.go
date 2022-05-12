@@ -76,6 +76,15 @@ type ListMeta struct {
 	TotalCount int64 `json:"totalCount,omitempty"`
 }
 
+// Extend defines a new type used to store extended fields.
+type Extend map[string]interface{}
+
+// String returns the string format of Extend.
+func (ext Extend) String() string {
+	data, _ := json.Marshal(ext)
+	return string(data)
+}
+
 // TypeMeta describes an individual object in an API response or request
 // with strings representing the type of the object and its API schema version.
 // Structures that are versioned or persisted should inline TypeMeta.
@@ -91,15 +100,6 @@ type TypeMeta struct {
 	// Servers should convert recognized schemas to the latest internal value, and
 	// may reject unrecognized values.
 	APIVersion string `json:"apiVersion,omitempty"`
-}
-
-// Extend defines a new type used to store extended fields.
-type Extend map[string]interface{}
-
-// String returns the string format of Extend.
-func (ext Extend) String() string {
-	data, _ := json.Marshal(ext)
-	return string(data)
 }
 
 // CreateOptions may be provided when creating an API object.
@@ -127,18 +127,9 @@ type DeleteOptions struct {
 type ListOptions struct {
 	TypeMeta `json:",inline"`
 
-	// LabelSelector is used to find matching REST resources.
-	LabelSelector string `json:"labelSelector,omitempty" form:"labelSelector"`
-
-	// FieldSelector restricts the list of returned objects by their fields. Defaults to everything.
-	FieldSelector string `json:"fieldSelector,omitempty" form:"fieldSelector"`
-
-	// TimeoutSeconds specifies the seconds of ClientIP type session sticky time.
-	TimeoutSeconds *int64 `json:"timeoutSeconds,omitempty"`
-
 	// Offset specify the number of records to skip before starting to return the records.
-	Offset *int64 `json:"offset,omitempty" form:"offset"`
+	Offset *int64 `json:"offset,omitempty"`
 
 	// Limit specify the number of records to be retrieved.
-	Limit *int64 `json:"limit,omitempty" form:"limit"`
+	Limit *int64 `json:"limit,omitempty"`
 }
