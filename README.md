@@ -34,3 +34,6 @@
 6. test
 7. policy audit
 8. migrate
+9. metrics
+10. profiling
+11. version

@@ -3,6 +3,7 @@ module github.com/che-kwas/iam-kit
 go 1.17
 
 require (
+	github.com/AlekSi/pointer v1.1.0
 	github.com/appleboy/gin-jwt/v2 v2.8.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
