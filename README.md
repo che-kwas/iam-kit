@@ -23,7 +23,7 @@
 1. init最佳实践
 2. config最佳实践
   - load config独立出来，不只是server需要load
-3. errors最佳实践
+3. errors最佳实践（参考kratos公众号文章）
 4. logger最佳实践
   - withValues
   - WithContext
@@ -38,3 +38,4 @@
 10. profiling
 11. version
 12. list selector
+13. server可以只创建http/grpc server

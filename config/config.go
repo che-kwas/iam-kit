@@ -13,7 +13,7 @@ var (
 	DefaultConfigPaths = []string{".", "./configs", "/etc/iam"}
 )
 
-// LoadConfig loads config from file and ENV variables if set.
+// LoadConfig loads config from cfgPath or from <DefaultConfigPaths>/<appName>.yaml.
 func LoadConfig(cfgPath string, appName string) error {
 	log.Infof("Loading config, cfgPath = %s, appName = %s", cfgPath, appName)
 	if cfgPath == "" && appName == "" {
@@ -27,7 +27,7 @@ func LoadConfig(cfgPath string, appName string) error {
 			viper.AddConfigPath(path)
 		}
 
-		viper.SetConfigFile(appName)
+		viper.SetConfigFile(appName + ".yaml")
 	}
 	viper.SetConfigType("yaml")
 

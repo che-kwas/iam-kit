@@ -2,10 +2,8 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"github.com/che-kwas/iam-kit/config"
 	"github.com/che-kwas/iam-kit/shutdown"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
@@ -25,28 +23,17 @@ type Server struct {
 	err error
 }
 
-func NewServer(name string, cfgFile string) (*Server, error) {
+func NewServer(name string) (*Server, error) {
 	server := &Server{
 		name: name,
 		gs:   shutdown.New(10 * time.Second),
 	}
 
-	server.loadConfig(cfgFile, name).buildHTTPServer().buildGRPCServer()
+	server.buildHTTPServer().buildGRPCServer()
 	return server, server.err
 }
 
-func (s *Server) loadConfig(cfgFile string, name string) *Server {
-	cfgName := fmt.Sprintf("%s.yaml", name)
-
-	s.err = config.LoadConfig(cfgFile, cfgName)
-	return s
-}
-
 func (s *Server) buildHTTPServer() *Server {
-	if s.err != nil {
-		return s
-	}
-
 	s.httpServer, s.err = NewHTTPServerBuilder().Build()
 	s.gs.AddShutdownCallback(shutdown.ShutdownFunc(s.httpServer.Shutdown))
 

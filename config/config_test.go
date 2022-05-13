@@ -25,7 +25,7 @@ func TestLoadConfig_FromCfgPath(t *testing.T) {
 func TestLoadConfig_FromCfgName(t *testing.T) {
 	assert := assert.New(t)
 
-	err := LoadConfig("", "config_test.yaml")
+	err := LoadConfig("", "config_test")
 	assert.Nil(err)
 	assert.Equal("127.0.0.1:7777", viper.GetString("server.address"))
 }
