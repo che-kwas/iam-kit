@@ -2,9 +2,9 @@ package config
 
 import (
 	"errors"
+	"log"
 	"strings"
 
-	"github.com/marmotedu/iam/pkg/log"
 	"github.com/spf13/viper"
 )
 
@@ -15,7 +15,7 @@ var (
 
 // LoadConfig loads config from cfgPath or from <DefaultConfigPaths>/<appName>.yaml.
 func LoadConfig(cfgPath string, appName string) error {
-	log.Infof("Loading config, cfgPath = %s, appName = %s", cfgPath, appName)
+	log.Printf("Loading config, cfgPath = %s, appName = %s", cfgPath, appName)
 	if cfgPath == "" && appName == "" {
 		return errors.New("no configuration file specified")
 	}

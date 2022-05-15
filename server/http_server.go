@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/marmotedu/iam/pkg/log"
 	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 
@@ -114,13 +114,13 @@ func (s *HTTPServer) Run() error {
 
 	var eg errgroup.Group
 	eg.Go(func() error {
-		log.Infof("[HTTP] server start to listening on %s", s.address)
+		log.Printf("[HTTP] server start to listening on %s", s.address)
 
 		if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			return err
 		}
 
-		log.Infof("[HTTP] server on %s stopped", s.address)
+		log.Printf("[HTTP] server on %s stopped", s.address)
 		return nil
 	})
 
@@ -165,12 +165,12 @@ func (s *HTTPServer) ping(ctx context.Context) error {
 
 		resp, err := http.DefaultClient.Do(req)
 		if err == nil && resp.StatusCode == http.StatusOK {
-			log.Debug("Server self health check success.")
+			log.Print("Server self health check success.")
 			resp.Body.Close()
 			return nil
 		}
 
-		log.Debug("Waiting for the router, retry in 1 second.")
+		log.Print("Waiting for the router, retry in 1 second.")
 		time.Sleep(1 * time.Second)
 
 		select {

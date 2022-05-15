@@ -2,9 +2,9 @@ package server
 
 import (
 	"context"
+	"log"
 	"net"
 
-	"github.com/marmotedu/iam/pkg/log"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 )
@@ -52,7 +52,7 @@ var _ Servable = &GRPCServer{}
 
 // Run runs the HTTP server and conducts a self health check.
 func (s *GRPCServer) Run() error {
-	log.Infof("[gRPC] server start to listening on %s", s.address)
+	log.Printf("[gRPC] server start to listening on %s", s.address)
 
 	listen, err := net.Listen("tcp", s.address)
 	if err != nil {
