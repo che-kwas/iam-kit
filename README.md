@@ -45,3 +45,5 @@
 11. version
 12. list selector
 13. server可以只创建http/grpc server
+14. db接口的opts有什么用
+15. delete不存在的数据，会报错吗
