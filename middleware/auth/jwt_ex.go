@@ -8,7 +8,7 @@ import (
 	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/marmotedu/errors"
 
-	"github.com/che-kwas/iam-kit/errcode"
+	"github.com/che-kwas/iam-kit/code"
 	"github.com/che-kwas/iam-kit/httputil"
 	"github.com/che-kwas/iam-kit/middleware"
 )
@@ -44,7 +44,7 @@ func (j JWTExStrategy) AuthFunc() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.Request.Header.Get("Authorization")
 		if len(header) == 0 {
-			httputil.WriteResponse(c, errors.WithCode(errcode.ErrHeaderInvalid, "Authorization header cannot be empty."), nil)
+			httputil.WriteResponse(c, errors.WithCode(code.ErrHeaderInvalid, "Authorization header cannot be empty."), nil)
 			c.Abort()
 
 			return
@@ -76,7 +76,7 @@ func (j JWTExStrategy) AuthFunc() gin.HandlerFunc {
 			return []byte(secret.Key), nil
 		})
 		if err != nil || !parsedT.Valid {
-			httputil.WriteResponse(c, errors.WithCode(errcode.ErrTokenInvalid, err.Error()), nil)
+			httputil.WriteResponse(c, errors.WithCode(code.ErrTokenInvalid, err.Error()), nil)
 			c.Abort()
 
 			return
@@ -84,7 +84,7 @@ func (j JWTExStrategy) AuthFunc() gin.HandlerFunc {
 
 		if KeyExpired(secret.Expires) {
 			tm := time.Unix(secret.Expires, 0).Format("2006-01-02 15:04:05")
-			httputil.WriteResponse(c, errors.WithCode(errcode.ErrTokenExpired, "expired at: %s", tm), nil)
+			httputil.WriteResponse(c, errors.WithCode(code.ErrTokenExpired, "expired at: %s", tm), nil)
 			c.Abort()
 
 			return

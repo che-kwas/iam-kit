@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/marmotedu/errors"
 
-	"github.com/che-kwas/iam-kit/errcode"
+	"github.com/che-kwas/iam-kit/code"
 	"github.com/che-kwas/iam-kit/httputil"
 	"github.com/che-kwas/iam-kit/middleware"
 )
@@ -34,7 +34,7 @@ func (b BasicStrategy) AuthFunc() gin.HandlerFunc {
 		if len(auth) != 2 || auth[0] != "Basic" {
 			httputil.WriteResponse(
 				c,
-				errors.WithCode(errcode.ErrHeaderInvalid, "Authorization header is invalid."),
+				errors.WithCode(code.ErrHeaderInvalid, "Authorization header is invalid."),
 				nil,
 			)
 			c.Abort()
@@ -48,7 +48,7 @@ func (b BasicStrategy) AuthFunc() gin.HandlerFunc {
 		if len(pair) != 2 || !b.compare(pair[0], pair[1]) {
 			httputil.WriteResponse(
 				c,
-				errors.WithCode(errcode.ErrHeaderInvalid, "Authorization header is invalid."),
+				errors.WithCode(code.ErrHeaderInvalid, "Authorization header is invalid."),
 				nil,
 			)
 			c.Abort()

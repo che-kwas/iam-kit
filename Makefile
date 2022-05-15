@@ -26,8 +26,8 @@ lint: tools.verify.golangci-lint
 ## gen: Generate error code and document.
 .PHONY: gen
 gen: tools.verify.codegen
-	codegen ./errcode
-	codegen -doc -output ./error_code_base.md ./errcode
+	codegen ./code
+	codegen -doc -output ./error_code_base.md ./code
 
 ## test: Run unit test.
 .PHONY: test

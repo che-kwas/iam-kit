@@ -20,6 +20,10 @@
 3. iam-authz-server：`12XXYY`
 4. iam-pump：`13XXYY`
 
+### 通用错误码
+
+[error_code_base.md](error_code_base.md)
+
 ## TODO
 
 1. init最佳实践

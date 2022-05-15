@@ -1,7 +1,7 @@
-package errcode
+package code
 
 //go:generate codegen
-//go:generate codegen -doc -output ../../../errcode_base_gen.md
+//go:generate codegen -doc -output ../../../errcode_base.md
 
 // Common: basic errors (1000xx).
 const (
