@@ -1,5 +1,6 @@
-# IAM Kit
 [![CI](https://github.com/che-kwas/iam-kit/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/che-kwas/iam-kit/actions/workflows/ci.yaml)
+
+# IAM Kit
 
 ## 错误码
 
