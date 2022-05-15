@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetInstanceId(t *testing.T) {
+func Test_GetInstanceId(t *testing.T) {
 	assert := assert.New(t)
 
 	id1 := GetInstanceID(1, "secret-")

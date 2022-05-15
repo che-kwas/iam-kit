@@ -21,7 +21,7 @@ var (
 	}
 )
 
-func TestAddShutdownCallback(t *testing.T) {
+func Test_AddShutdownCallback(t *testing.T) {
 	assert := assert.New(t)
 
 	gs := New(5 * time.Second)
@@ -31,7 +31,7 @@ func TestAddShutdownCallback(t *testing.T) {
 	assert.Equal(2, len(gs.callbacks))
 }
 
-func TestCallbacksGetCalled(t *testing.T) {
+func Test_CallbacksGetCalled(t *testing.T) {
 	assert := assert.New(t)
 	gs := New(5 * time.Second)
 	gs.AddShutdownCallback(ShutdownFunc(callbackOk))

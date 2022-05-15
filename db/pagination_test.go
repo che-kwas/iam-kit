@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewOffsetLimit(t *testing.T) {
+func Test_NewOffsetLimit(t *testing.T) {
 	assert := assert.New(t)
 
 	type args struct {

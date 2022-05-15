@@ -7,14 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLoadConfig_NoFileSpecified(t *testing.T) {
+func Test_LoadConfig_NoFileSpecified(t *testing.T) {
 	assert := assert.New(t)
 
 	err := LoadConfig("", "")
 	assert.NotNil(err)
 }
 
-func TestLoadConfig_FromCfgPath(t *testing.T) {
+func Test_LoadConfig_FromCfgPath(t *testing.T) {
 	assert := assert.New(t)
 
 	err := LoadConfig("./config_test.yaml", "")
@@ -22,7 +22,7 @@ func TestLoadConfig_FromCfgPath(t *testing.T) {
 	assert.Equal("127.0.0.1:7777", viper.GetString("server.address"))
 }
 
-func TestLoadConfig_FromCfgName(t *testing.T) {
+func Test_LoadConfig_FromCfgName(t *testing.T) {
 	assert := assert.New(t)
 
 	err := LoadConfig("", "config_test")

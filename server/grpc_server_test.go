@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewGRPCServerBuilder_NoConfig(t *testing.T) {
+func Test_NewGRPCServerBuilder_NoConfig(t *testing.T) {
 	assert := assert.New(t)
 
 	b := NewGRPCServerBuilder()
@@ -17,7 +17,7 @@ func TestNewGRPCServerBuilder_NoConfig(t *testing.T) {
 	assert.Nil(b.err)
 }
 
-func TestNewGRPCServerBuilder_HasConfig(t *testing.T) {
+func Test_NewGRPCServerBuilder_HasConfig(t *testing.T) {
 	assert := assert.New(t)
 
 	addr := "127.0.0.1:8888"
@@ -30,7 +30,7 @@ func TestNewGRPCServerBuilder_HasConfig(t *testing.T) {
 	assert.Nil(b.err)
 }
 
-func TestBuild_GRPCServerBuilderError(t *testing.T) {
+func Test_Build_GRPCServerBuilderError(t *testing.T) {
 	assert := assert.New(t)
 	b := NewGRPCServerBuilder()
 	b.err = errors.New("some error")
@@ -40,7 +40,7 @@ func TestBuild_GRPCServerBuilderError(t *testing.T) {
 	assert.NotNil(err)
 }
 
-func TestBuild_GRPCServerBuilderOk(t *testing.T) {
+func Test_Build_GRPCServerBuilderOk(t *testing.T) {
 	assert := assert.New(t)
 	viper.Reset()
 

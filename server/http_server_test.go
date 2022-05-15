@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewHTTPServerBuilder_NoConfig(t *testing.T) {
+func Test_NewHTTPServerBuilder_NoConfig(t *testing.T) {
 	assert := assert.New(t)
 
 	b := NewHTTPServerBuilder()
@@ -23,7 +23,7 @@ func TestNewHTTPServerBuilder_NoConfig(t *testing.T) {
 	assert.Nil(b.err)
 }
 
-func TestNewHTTPServerBuilder_HasConfig(t *testing.T) {
+func Test_NewHTTPServerBuilder_HasConfig(t *testing.T) {
 	assert := assert.New(t)
 
 	addr := "127.0.0.1:7777"
@@ -43,7 +43,7 @@ func TestNewHTTPServerBuilder_HasConfig(t *testing.T) {
 	assert.Nil(b.err)
 }
 
-func TestBuild_HTTPServerBuilderError(t *testing.T) {
+func Test_Build_HTTPServerBuilderError(t *testing.T) {
 	assert := assert.New(t)
 	b := NewHTTPServerBuilder()
 	b.err = errors.New("some error")
@@ -53,7 +53,7 @@ func TestBuild_HTTPServerBuilderError(t *testing.T) {
 	assert.NotNil(err)
 }
 
-func TestBuild_HTTPServerBuilderOk(t *testing.T) {
+func Test_Build_HTTPServerBuilderOk(t *testing.T) {
 	assert := assert.New(t)
 	addr := "127.0.0.1:7777"
 	viper.Reset()
