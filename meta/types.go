@@ -1,4 +1,5 @@
-package v1
+// Package meta contains API types that are common to all versions.
+package meta // import "github.com/che-kwas/iam-kit/meta"
 
 import (
 	"time"
@@ -78,12 +79,6 @@ func (obj *ObjectMeta) AfterFind(tx *gorm.DB) error {
 	return nil
 }
 
-// ListMeta describes metadata that synthetic resources must have, including lists and
-// various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
-type ListMeta struct {
-	TotalCount int64 `json:"totalCount,omitempty"`
-}
-
 // Extend defines a new type used to store extended fields.
 type Extend map[string]interface{}
 
@@ -93,48 +88,14 @@ func (ext Extend) String() string {
 	return string(data)
 }
 
-// TypeMeta describes an individual object in an API response or request
-// with strings representing the type of the object and its API schema version.
-// Structures that are versioned or persisted should inline TypeMeta.
-type TypeMeta struct {
-	// Kind is a string value representing the REST resource this object represents.
-	// Servers may infer this from the endpoint the client submits requests to.
-	// Cannot be updated.
-	// In CamelCase.
-	// required: false
-	Kind string `json:"kind,omitempty"`
-
-	// APIVersion defines the versioned schema of this representation of an object.
-	// Servers should convert recognized schemas to the latest internal value, and
-	// may reject unrecognized values.
-	APIVersion string `json:"apiVersion,omitempty"`
-}
-
-// CreateOptions may be provided when creating an API object.
-type CreateOptions struct {
-	TypeMeta `json:",inline"`
-}
-
-// GetOptions is the standard query options to the standard REST get call.
-type GetOptions struct {
-	TypeMeta `json:",inline"`
-}
-
-// UpdateOptions may be provided when updating an API object.
-// All fields in UpdateOptions should also be present in PatchOptions.
-type UpdateOptions struct {
-	TypeMeta `json:",inline"`
-}
-
-// DeleteOptions may be provided when deleting an API object.
-type DeleteOptions struct {
-	TypeMeta `json:",inline"`
+// ListMeta describes metadata that synthetic resources must have, including lists and
+// various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
+type ListMeta struct {
+	TotalCount int64 `json:"totalCount,omitempty"`
 }
 
 // ListOptions is the query options to a standard REST list call.
 type ListOptions struct {
-	TypeMeta `json:",inline"`
-
 	// Offset specify the number of records to skip before starting to return the records.
 	Offset *int `json:"offset,omitempty"`
 
