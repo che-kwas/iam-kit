@@ -1,4 +1,5 @@
-package config
+// Package config manages the configuration of IAM platform.
+package config // import "github.com/che-kwas/iam-kit/config"
 
 import (
 	"errors"
