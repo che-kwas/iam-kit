@@ -30,10 +30,10 @@ type ObjectMeta struct {
 	// definition.
 	// It will be generated automated only if Name is not specified.
 	// Cannot be updated.
-	Name string `json:"name,omitempty" gorm:"column:name;type:varchar(64);not null" validate:"name"`
+	Name string `json:"name,omitempty" gorm:"unique;column:name;type:varchar(64);not null"`
 
 	// Extend store the fields that need to be added, but do not want to add a new table column, will not be stored in db.
-	Extend Extend `json:"extend,omitempty" gorm:"-" validate:"omitempty"`
+	Extend Extend `json:"extend,omitempty" gorm:"-"`
 
 	// ExtendShadow is the shadow of Extend. DO NOT modify directly.
 	ExtendShadow string `json:"-" gorm:"column:extendShadow" validate:"omitempty"`
