@@ -1,4 +1,5 @@
-package code
+// Package code defines the base errors with corresponding error code.
+package code // import "github.com/che-kwas/iam-kit/code"
 
 //go:generate codegen
 //go:generate codegen -doc -output ../../../errcode_base.md
