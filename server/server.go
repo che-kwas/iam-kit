@@ -1,4 +1,4 @@
-// Package server defines the generic server used by all iam platform.
+// Package server is a server builder.
 package server // import "github.com/che-kwas/iam-kit/server"
 
 import (

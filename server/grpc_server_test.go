@@ -12,7 +12,7 @@ func Test_NewGRPCServerBuilder_NoConfig(t *testing.T) {
 	assert := assert.New(t)
 
 	b := NewGRPCServerBuilder()
-	assert.Equal(DefaultGRPCAddr, b.Address)
+	assert.Equal(DefaultGRPCAddr, b.Addr)
 	assert.Equal(DefaultGRPCMaxMsgSize, b.MaxMsgSize)
 	assert.Nil(b.err)
 }
@@ -22,10 +22,10 @@ func Test_NewGRPCServerBuilder_HasConfig(t *testing.T) {
 
 	addr := "127.0.0.1:8888"
 	viper.Reset()
-	viper.Set("grpc.address", addr)
+	viper.Set("grpc.addr", addr)
 
 	b := NewGRPCServerBuilder()
-	assert.Equal(addr, b.Address)
+	assert.Equal(addr, b.Addr)
 	assert.Equal(DefaultGRPCMaxMsgSize, b.MaxMsgSize)
 	assert.Nil(b.err)
 }
@@ -46,5 +46,5 @@ func Test_Build_GRPCServerBuilderOk(t *testing.T) {
 
 	server, err := NewGRPCServerBuilder().Build()
 	assert.Nil(err)
-	assert.Equal(DefaultGRPCAddr, server.address)
+	assert.Equal(DefaultGRPCAddr, server.addr)
 }

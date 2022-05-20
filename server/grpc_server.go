@@ -17,7 +17,7 @@ const (
 
 // GRPCServerBuilder defines options for building a GRPCServer.
 type GRPCServerBuilder struct {
-	Address    string
+	Addr       string
 	MaxMsgSize int `mapstructure:"max-msg-size"`
 
 	err error
@@ -25,7 +25,7 @@ type GRPCServerBuilder struct {
 
 // NewGRPCServerBuilder is used to build an GRPCServer.
 func NewGRPCServerBuilder() *GRPCServerBuilder {
-	b := &GRPCServerBuilder{Address: DefaultGRPCAddr, MaxMsgSize: DefaultGRPCMaxMsgSize}
+	b := &GRPCServerBuilder{Addr: DefaultGRPCAddr, MaxMsgSize: DefaultGRPCMaxMsgSize}
 	b.err = viper.UnmarshalKey(ConfigGRPCKey, b)
 
 	return b
@@ -40,21 +40,21 @@ func (b *GRPCServerBuilder) Build() (*GRPCServer, error) {
 	opts := []grpc.ServerOption{grpc.MaxRecvMsgSize(b.MaxMsgSize)}
 	server := grpc.NewServer(opts...)
 
-	return &GRPCServer{Server: server, address: b.Address}, nil
+	return &GRPCServer{Server: server, addr: b.Addr}, nil
 }
 
 type GRPCServer struct {
 	*grpc.Server
-	address string
+	addr string
 }
 
 var _ Servable = &GRPCServer{}
 
 // Run runs the HTTP server and conducts a self health check.
 func (s *GRPCServer) Run() error {
-	log.Printf("[gRPC] server start to listening on %s", s.address)
+	log.Printf("[gRPC] server start to listening on %s", s.addr)
 
-	listen, err := net.Listen("tcp", s.address)
+	listen, err := net.Listen("tcp", s.addr)
 	if err != nil {
 		return err
 	}

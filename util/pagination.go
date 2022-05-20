@@ -1,4 +1,4 @@
-package db
+package util
 
 const (
 	DefaultOffset = 0

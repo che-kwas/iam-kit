@@ -14,7 +14,7 @@ func Test_NewHTTPServerBuilder_NoConfig(t *testing.T) {
 
 	b := NewHTTPServerBuilder()
 	assert.Equal(DefaultMode, b.Mode)
-	assert.Equal(DefaultHTTPAddr, b.Address)
+	assert.Equal(DefaultHTTPAddr, b.Addr)
 	assert.Equal([]string{}, b.Middlewares)
 	assert.Equal(DefaultHealthz, b.Healthz)
 	assert.Equal(DefaultMetrics, b.Metrics)
@@ -29,11 +29,11 @@ func Test_NewHTTPServerBuilder_HasConfig(t *testing.T) {
 	addr := "127.0.0.1:7777"
 	viper.Reset()
 	viper.Set("http.healthz", false)
-	viper.Set("http.address", addr)
+	viper.Set("http.addr", addr)
 
 	b := NewHTTPServerBuilder()
 	assert.False(b.Healthz)
-	assert.Equal(addr, b.Address)
+	assert.Equal(addr, b.Addr)
 
 	assert.Equal(DefaultMode, b.Mode)
 	assert.Equal([]string{}, b.Middlewares)
@@ -57,11 +57,11 @@ func Test_Build_HTTPServerBuilderOk(t *testing.T) {
 	assert := assert.New(t)
 	addr := "127.0.0.1:7777"
 	viper.Reset()
-	viper.Set("http.address", addr)
+	viper.Set("http.addr", addr)
 
 	server, err := NewHTTPServerBuilder().Build()
 	assert.Nil(err)
-	assert.Equal(addr, server.address)
+	assert.Equal(addr, server.addr)
 	assert.Equal([]string{}, server.middlewares)
 	assert.True(server.healthz)
 	assert.False(server.metrics)

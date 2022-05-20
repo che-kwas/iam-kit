@@ -35,7 +35,7 @@ const (
 // HTTPServerBuilder defines options for building an HTTPServer.
 type HTTPServerBuilder struct {
 	Mode        string
-	Address     string
+	Addr        string
 	Middlewares []string
 	Healthz     bool
 	Metrics     bool
@@ -49,7 +49,7 @@ type HTTPServerBuilder struct {
 func NewHTTPServerBuilder() *HTTPServerBuilder {
 	b := &HTTPServerBuilder{
 		Mode:        DefaultMode,
-		Address:     DefaultHTTPAddr,
+		Addr:        DefaultHTTPAddr,
 		Middlewares: []string{},
 		Healthz:     DefaultHealthz,
 		Metrics:     DefaultMetrics,
@@ -76,7 +76,7 @@ func (b *HTTPServerBuilder) Build() (*HTTPServer, error) {
 
 	s := &HTTPServer{
 		Engine:      gin.New(),
-		address:     b.Address,
+		addr:        b.Addr,
 		middlewares: b.Middlewares,
 		healthz:     b.Healthz,
 		metrics:     b.Metrics,
@@ -94,7 +94,7 @@ func (b *HTTPServerBuilder) Build() (*HTTPServer, error) {
 type HTTPServer struct {
 	*gin.Engine
 
-	address     string
+	addr        string
 	server      *http.Server
 	middlewares []string
 	healthz     bool
@@ -108,19 +108,19 @@ var _ Servable = &HTTPServer{}
 // Run runs the HTTP server and conducts a self health check.
 func (s *HTTPServer) Run() error {
 	s.server = &http.Server{
-		Addr:    s.address,
+		Addr:    s.addr,
 		Handler: s,
 	}
 
 	var eg errgroup.Group
 	eg.Go(func() error {
-		log.Printf("[HTTP] server start to listening on %s", s.address)
+		log.Printf("[HTTP] server start to listening on %s", s.addr)
 
 		if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			return err
 		}
 
-		log.Printf("[HTTP] server on %s stopped", s.address)
+		log.Printf("[HTTP] server on %s stopped", s.addr)
 		return nil
 	})
 
@@ -154,7 +154,7 @@ func (s *HTTPServer) setupAPIs() {
 }
 
 func (s *HTTPServer) ping(ctx context.Context) error {
-	url := fmt.Sprintf("http://%s%s", s.address, RouterHealthz)
+	url := fmt.Sprintf("http://%s%s", s.addr, RouterHealthz)
 	url = strings.Replace(url, "0.0.0.0", "127.0.0.1", 1)
 
 	for {

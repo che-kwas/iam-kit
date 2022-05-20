@@ -1,4 +1,5 @@
-package db
+// Package db is a db instance builder.
+package db // import "github.com/che-kwas/iam-kit/db"
 
 import (
 	"database/sql"
@@ -13,7 +14,7 @@ import (
 const (
 	ConfigDBKey = "mysql"
 
-	DefaultHost                  = "127.0.0.1:3306"
+	DefaultAddr                  = "127.0.0.1:3306"
 	DefaultMaxIdleConnections    = 100
 	DefaultMaxOpenConnections    = 100
 	DefaultMaxConnectionLifeTime = "10s"
@@ -21,7 +22,7 @@ const (
 
 // DBBuilder defines options for building a db instance.
 type DBBuilder struct {
-	Host                  string
+	Addr                  string
 	Username              string
 	Password              string
 	Database              string
@@ -37,7 +38,7 @@ type DBBuilder struct {
 // NewDBBuilder is used to build a db instance.
 func NewDBBuilder() *DBBuilder {
 	b := &DBBuilder{
-		Host:                  DefaultHost,
+		Addr:                  DefaultAddr,
 		MaxIdleConnections:    DefaultMaxIdleConnections,
 		MaxOpenConnections:    DefaultMaxOpenConnections,
 		MaxConnectionLifeTime: DefaultMaxConnectionLifeTime,
@@ -67,7 +68,7 @@ func (b *DBBuilder) openDB() *DBBuilder {
 	dsn := fmt.Sprintf(`%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true&loc=Local`,
 		b.Username,
 		b.Password,
-		b.Host,
+		b.Addr,
 		b.Database)
 
 	b.db, b.err = gorm.Open(mysql.Open(dsn))
