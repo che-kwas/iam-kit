@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"strings"
-	"sync"
 
 	"github.com/spf13/viper"
 )
@@ -26,50 +25,23 @@ type Config struct {
 	err error
 }
 
-var (
-	cfg  *Config
-	once sync.Once
-)
-
-// Cfg returns the global cfg instance.
-func Cfg() *Config {
-	if cfg == nil {
-		log.Fatal("Configuration not initialized.")
-	}
-
-	return cfg
-}
-
-// InitConfig initializes the config from cfgPath or from <DefaultConfigPaths>/<appName>.yaml.
-func InitConfig(cfgPath, appName string) error {
-	log.Printf("Initializing config, cfgPath = %s, appName = %s", cfgPath, appName)
+// NewConfig builds a config from cfgPath or from <DefaultConfigPaths>/<appName>.yaml.
+func NewConfig(cfgPath, appName string) (*Config, error) {
+	log.Printf("Building config, cfgPath = %s, appName = %s", cfgPath, appName)
 	if cfgPath == "" && appName == "" {
-		return errors.New("no configuration file specified")
+		return nil, errors.New("no configuration file specified")
 	}
 
-	if cfg != nil {
-		return nil
-	}
-
-	var err error
-	once.Do(func() {
-		cfg = newConfig().loadConfig(cfgPath, appName).unmarshal()
-		if err = cfg.err; err != nil {
-			cfg = nil
-		}
-	})
-
-	return err
-}
-
-func newConfig() *Config {
-	return &Config{
+	cfg := &Config{
 		HTTPOpts:  DefaultHTTPOptions(),
 		GRPCOpts:  DefaultGRPCOptions(),
 		JWTOpts:   DefaultJWTOptions(),
 		MysqlOpts: DefaultMysqlOptions(),
 		RedisOpts: DefaultRedisOptions(),
 	}
+
+	cfg.loadConfig(cfgPath, appName).unmarshal()
+	return cfg, cfg.err
 }
 
 func (c *Config) loadConfig(cfgPath, appName string) *Config {

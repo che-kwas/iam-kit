@@ -23,10 +23,14 @@ type Server struct {
 	gs         *shutdown.GracefulShutdown
 }
 
-func NewServer(name string) (*Server, error) {
+func NewServer(
+	name string,
+	httpOpts *config.HTTPOptions,
+	grpcOpts *config.GRPCOptions,
+) (*Server, error) {
 	gs := shutdown.New(10 * time.Second)
-	httpServer := NewHTTPServer(config.Cfg().HTTPOpts)
-	grpcServer := NewGRPCServer(config.Cfg().GRPCOpts)
+	httpServer := NewHTTPServer(httpOpts)
+	grpcServer := NewGRPCServer(grpcOpts)
 	gs.AddShutdownCallback(shutdown.ShutdownFunc(httpServer.Shutdown))
 	gs.AddShutdownCallback(shutdown.ShutdownFunc(grpcServer.Shutdown))
 
