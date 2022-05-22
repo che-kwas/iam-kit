@@ -10,85 +10,18 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 
+	"github.com/che-kwas/iam-kit/config"
 	"github.com/che-kwas/iam-kit/httputil"
 )
 
 const (
-	ConfigHTTPKey = "http"
-
-	DefaultMode        = "release"
-	DefaultHTTPAddr    = "0.0.0.0:8000"
-	DefaultHealthz     = true
-	DefaultMetrics     = false
-	DefaultProfiling   = false
-	DefaultPingTimeout = "10s"
-
 	RouterVersion   = "/version"
 	RouterHealthz   = "/healthz"
 	RouterMetrics   = "/metrics"
 	RouterProfiling = "/debug/pprof"
 )
-
-// HTTPServerBuilder defines options for building an HTTPServer.
-type HTTPServerBuilder struct {
-	Mode        string
-	Addr        string
-	Middlewares []string
-	Healthz     bool
-	Metrics     bool
-	Profiling   bool
-	PingTimeout string `mapstructure:"ping-timeout"`
-
-	err error
-}
-
-// NewHTTPServerBuilder is used to build an HTTPServer.
-func NewHTTPServerBuilder() *HTTPServerBuilder {
-	b := &HTTPServerBuilder{
-		Mode:        DefaultMode,
-		Addr:        DefaultHTTPAddr,
-		Middlewares: []string{},
-		Healthz:     DefaultHealthz,
-		Metrics:     DefaultMetrics,
-		Profiling:   DefaultProfiling,
-		PingTimeout: DefaultPingTimeout,
-	}
-	b.err = viper.UnmarshalKey(ConfigHTTPKey, b)
-
-	return b
-}
-
-// Build builds an HTTPServer.
-func (b *HTTPServerBuilder) Build() (*HTTPServer, error) {
-	if b.err != nil {
-		return nil, b.err
-	}
-	var pingTimeout time.Duration
-	pingTimeout, b.err = time.ParseDuration(b.PingTimeout)
-	if b.err != nil {
-		return nil, b.err
-	}
-
-	gin.SetMode(b.Mode)
-
-	s := &HTTPServer{
-		Engine:      gin.New(),
-		addr:        b.Addr,
-		middlewares: b.Middlewares,
-		healthz:     b.Healthz,
-		metrics:     b.Metrics,
-		profiling:   b.Profiling,
-		pingTimeout: pingTimeout,
-	}
-
-	s.setupMiddlewares()
-	s.setupAPIs()
-
-	return s, nil
-}
 
 // HTTPServer is both a HTTPServer and a gin.Engine.
 type HTTPServer struct {
@@ -104,6 +37,26 @@ type HTTPServer struct {
 }
 
 var _ Servable = &HTTPServer{}
+
+// NewHTTPServer builds an HTTPServer.
+func NewHTTPServer(opts *config.HTTPOptions) *HTTPServer {
+	gin.SetMode(opts.Mode)
+
+	s := &HTTPServer{
+		Engine:      gin.New(),
+		addr:        opts.Addr,
+		middlewares: opts.Middlewares,
+		healthz:     opts.Healthz,
+		metrics:     opts.Metrics,
+		profiling:   opts.Profiling,
+		pingTimeout: opts.PingTimeout,
+	}
+
+	s.setupMiddlewares()
+	s.setupAPIs()
+
+	return s
+}
 
 // Run runs the HTTP server and conducts a self health check.
 func (s *HTTPServer) Run() error {
