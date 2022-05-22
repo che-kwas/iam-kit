@@ -3,29 +3,29 @@ package config
 import (
 	"testing"
 
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_LoadConfig_NoFileSpecified(t *testing.T) {
+func Test_InitConfig(t *testing.T) {
 	assert := assert.New(t)
 
-	err := LoadConfig("", "")
+	// no config file specified
+	err := InitConfig("", "")
 	assert.NotNil(err)
-}
 
-func Test_LoadConfig_FromCfgPath(t *testing.T) {
-	assert := assert.New(t)
-
-	err := LoadConfig("./config_test.yaml", "")
+	// first initialization
+	err = InitConfig("./config_test.yaml", "")
 	assert.Nil(err)
-	assert.Equal("127.0.0.1:7777", viper.GetString("server.addr"))
-}
 
-func Test_LoadConfig_FromCfgName(t *testing.T) {
-	assert := assert.New(t)
+	cfg := Cfg()
+	assert.Equal("127.0.0.1:7777", cfg.HTTPOpts.Addr)
+	assert.True(cfg.HTTPOpts.Healthz)
+	assert.Equal([]string{"127.0.0.1:6379"}, cfg.RedisOpts.Addrs)
+	assert.Equal("", cfg.RedisOpts.Password)
 
-	err := LoadConfig("", "config_test")
+	// ignore second initialization
+	err = InitConfig("", "wrongAppName")
 	assert.Nil(err)
-	assert.Equal("127.0.0.1:7777", viper.GetString("server.addr"))
+	assert.Equal("127.0.0.1:7777", Cfg().HTTPOpts.Addr)
+
 }
