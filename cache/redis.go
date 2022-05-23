@@ -8,8 +8,6 @@ import (
 
 // NewRedisIns builds a redis cache instance.
 func NewRedisIns(opts *config.RedisOptions) (*redis.UniversalClient, error) {
-
-	// rdb is *redis.ClusterClient.
 	rdb := redis.NewUniversalClient(&redis.UniversalOptions{
 		Addrs:    opts.Addrs,
 		Password: opts.Password,
