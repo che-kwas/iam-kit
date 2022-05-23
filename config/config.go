@@ -40,8 +40,11 @@ func NewConfig(cfgPath, appName string) (*Config, error) {
 		RedisOpts: DefaultRedisOptions(),
 	}
 
-	cfg.loadConfig(cfgPath, appName).unmarshal()
-	return cfg, cfg.err
+	if cfg.loadConfig(cfgPath, appName).unmarshal(); cfg.err != nil {
+		return nil, cfg.err
+	}
+
+	return cfg, nil
 }
 
 func (c *Config) loadConfig(cfgPath, appName string) *Config {
