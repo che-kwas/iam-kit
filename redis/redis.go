@@ -2,6 +2,8 @@
 package redis // import "github.com/che-kwas/iam-kit/redis"
 
 import (
+	"log"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 )
@@ -28,6 +30,7 @@ func NewRedisIns() (redis.UniversalClient, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("NewRedisIns, opts: %+v", opts)
 
 	rdb := redis.NewUniversalClient(&redis.UniversalOptions{
 		Addrs:    opts.Addrs,

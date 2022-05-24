@@ -3,6 +3,7 @@ package mysql // import "github.com/che-kwas/iam-kit/mysql"
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/spf13/viper"
@@ -36,6 +37,7 @@ func NewMysqlIns() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("NewMysqlIns, opts: %+v", opts)
 
 	dsn := fmt.Sprintf(`%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true&loc=Local`,
 		opts.Username,
