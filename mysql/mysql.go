@@ -3,7 +3,6 @@ package mysql // import "github.com/che-kwas/iam-kit/mysql"
 
 import (
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/spf13/viper"
@@ -20,11 +19,6 @@ const (
 	DefaultMaxConnLifeTime = time.Duration(10 * time.Second)
 )
 
-var (
-	db   *gorm.DB
-	once sync.Once
-)
-
 // MysqlOptions defines options for building a mysql instance.
 type MysqlOptions struct {
 	Addr            string
@@ -36,20 +30,8 @@ type MysqlOptions struct {
 	MaxConnLifeTime time.Duration `mapstructure:"max-connection-life-time"`
 }
 
-// GetMysqlIns returns a gorm db instance.
-func GetMysqlIns() (*gorm.DB, error) {
-	if db != nil {
-		return db, nil
-	}
-
-	var err error
-	once.Do(func() { db, err = newMysqlIns() })
-
-	return db, err
-
-}
-
-func newMysqlIns() (*gorm.DB, error) {
+// NewMysqlIns creates a gorm db instance.
+func NewMysqlIns() (*gorm.DB, error) {
 	opts, err := getMysqlOpts()
 	if err != nil {
 		return nil, err

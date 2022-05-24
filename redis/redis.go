@@ -2,8 +2,6 @@
 package redis // import "github.com/che-kwas/iam-kit/redis"
 
 import (
-	"sync"
-
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 )
@@ -15,11 +13,6 @@ const (
 	DefaultDatabase = 0
 )
 
-var (
-	rdb  redis.UniversalClient
-	once sync.Once
-)
-
 // RedisOptions defines options for building a redis client.
 type RedisOptions struct {
 	// Only one addr indicates that it will be a single node client,
@@ -29,26 +22,14 @@ type RedisOptions struct {
 	Database int
 }
 
-// GetRedisIns returns a redis client.
-func GetRedisIns() (redis.UniversalClient, error) {
-	if rdb != nil {
-		return rdb, nil
-	}
-
-	var err error
-	once.Do(func() { rdb, err = newRedisIns() })
-
-	return rdb, err
-
-}
-
-func newRedisIns() (redis.UniversalClient, error) {
+// NewRedisIns creates a redis client.
+func NewRedisIns() (redis.UniversalClient, error) {
 	opts, err := getRedisOpts()
 	if err != nil {
 		return nil, err
 	}
 
-	rdb = redis.NewUniversalClient(&redis.UniversalOptions{
+	rdb := redis.NewUniversalClient(&redis.UniversalOptions{
 		Addrs:    opts.Addrs,
 		Password: opts.Password,
 		DB:       opts.Database,
