@@ -3,19 +3,18 @@ package server
 import (
 	"testing"
 
-	"github.com/che-kwas/iam-kit/config"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_NewHTTPServer(t *testing.T) {
 	assert := assert.New(t)
 
-	opts := config.DefaultHTTPOptions()
-	server := NewHTTPServer(opts)
-	assert.Equal(opts.Addr, server.addr)
-	assert.Equal(opts.Middlewares, server.middlewares)
-	assert.Equal(opts.PingTimeout, server.pingTimeout)
-	assert.Equal(opts.Healthz, server.healthz)
-	assert.Equal(opts.Metrics, server.metrics)
-	assert.Equal(opts.Profiling, server.profiling)
+	server, err := NewHTTPServer()
+	assert.Nil(err)
+	assert.Equal(DefaultHTTPAddr, server.addr)
+	assert.Equal([]string{}, server.middlewares)
+	assert.Equal(DefaultHTTPPingTimeout, server.pingTimeout)
+	assert.Equal(DefaultHealthz, server.healthz)
+	assert.Equal(DefaultMetrics, server.metrics)
+	assert.Equal(DefaultProfiling, server.profiling)
 }

@@ -1,4 +1,4 @@
-// Package config manages the configuration of IAM platform.
+// Package config loads configuration from config file or environment variables.
 package config // import "github.com/che-kwas/iam-kit/config"
 
 import (
@@ -14,40 +14,13 @@ var (
 	DefaultConfigPaths = []string{".", "./configs", "/etc/iam"}
 )
 
-// Config defines the structure of the iam configuration.
-type Config struct {
-	HTTPOpts  *HTTPOptions  `mapstructure:"http"`
-	GRPCOpts  *GRPCOptions  `mapstructure:"grpc"`
-	JWTOpts   *JWTOptions   `mapstructure:"jwt"`
-	MysqlOpts *MysqlOptions `mapstructure:"mysql"`
-	RedisOpts *RedisOptions `mapstructure:"redis"`
-
-	err error
-}
-
-// NewConfig builds a config from cfgPath or from <DefaultConfigPaths>/<appName>.yaml.
-func NewConfig(cfgPath, appName string) (*Config, error) {
-	log.Printf("Building config, cfgPath = %s, appName = %s", cfgPath, appName)
+// LoadConfig loads a config from cfgPath or from <DefaultConfigPaths>/<appName>.yaml.
+func LoadConfig(cfgPath, appName string) error {
+	log.Printf("Loading config, cfgPath = %s, appName = %s", cfgPath, appName)
 	if cfgPath == "" && appName == "" {
-		return nil, errors.New("no configuration file specified")
+		return errors.New("no configuration file specified")
 	}
 
-	cfg := &Config{
-		HTTPOpts:  DefaultHTTPOptions(),
-		GRPCOpts:  DefaultGRPCOptions(),
-		JWTOpts:   DefaultJWTOptions(),
-		MysqlOpts: DefaultMysqlOptions(),
-		RedisOpts: DefaultRedisOptions(),
-	}
-
-	if cfg.loadConfig(cfgPath, appName).unmarshal(); cfg.err != nil {
-		return nil, cfg.err
-	}
-
-	return cfg, nil
-}
-
-func (c *Config) loadConfig(cfgPath, appName string) *Config {
 	if cfgPath != "" {
 		viper.SetConfigFile(cfgPath)
 	} else {
@@ -63,16 +36,5 @@ func (c *Config) loadConfig(cfgPath, appName string) *Config {
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
 
-	c.err = viper.ReadInConfig()
-
-	return c
-}
-
-func (c *Config) unmarshal() *Config {
-	if c.err != nil {
-		return c
-	}
-
-	c.err = viper.Unmarshal(c)
-	return c
+	return viper.ReadInConfig()
 }

@@ -5,9 +5,22 @@ import (
 	"log"
 	"net"
 
-	"github.com/che-kwas/iam-kit/config"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 )
+
+const (
+	ConfKeyGRPC = "grpc"
+
+	DefaultGRPCAddr       = "0.0.0.0:8001"
+	DefaultGRPCMaxMsgSize = 4 * 1024 * 1024
+)
+
+// GRPCOptions defines options for building a GRPCServer.
+type GRPCOptions struct {
+	Addr       string
+	MaxMsgSize int `mapstructure:"max-msg-size"`
+}
 
 type GRPCServer struct {
 	*grpc.Server
@@ -17,11 +30,16 @@ type GRPCServer struct {
 var _ Servable = &GRPCServer{}
 
 // NewGRPCServer builds an GRPCServer.
-func NewGRPCServer(opts *config.GRPCOptions) *GRPCServer {
+func NewGRPCServer() (*GRPCServer, error) {
+	opts, err := getGRPCOptions()
+	if err != nil {
+		return nil, err
+	}
+
 	grpcOpts := []grpc.ServerOption{grpc.MaxRecvMsgSize(opts.MaxMsgSize)}
 	server := grpc.NewServer(grpcOpts...)
 
-	return &GRPCServer{Server: server, addr: opts.Addr}
+	return &GRPCServer{Server: server, addr: opts.Addr}, nil
 }
 
 // Run runs the HTTP server and conducts a self health check.
@@ -40,4 +58,13 @@ func (s *GRPCServer) Run() error {
 func (s *GRPCServer) Shutdown(_ context.Context) error {
 	s.GracefulStop()
 	return nil
+}
+
+func getGRPCOptions() (*GRPCOptions, error) {
+	opts := &GRPCOptions{Addr: DefaultGRPCAddr, MaxMsgSize: DefaultGRPCMaxMsgSize}
+
+	if err := viper.UnmarshalKey(ConfKeyGRPC, opts); err != nil {
+		return nil, err
+	}
+	return opts, nil
 }

@@ -10,18 +10,38 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/che-kwas/iam-kit/config"
 	"github.com/che-kwas/iam-kit/httputil"
 )
 
 const (
+	ConfKeyHTTP = "http"
+
+	DefaultHTTPMode        = "release"
+	DefaultHTTPAddr        = "0.0.0.0:8000"
+	DefaultHTTPPingTimeout = time.Duration(10 * time.Second)
+	DefaultHealthz         = true
+	DefaultMetrics         = false
+	DefaultProfiling       = false
+
 	RouterVersion   = "/version"
 	RouterHealthz   = "/healthz"
 	RouterMetrics   = "/metrics"
 	RouterProfiling = "/debug/pprof"
 )
+
+// HTTPOptions defines options for building an HTTPServer.
+type HTTPOptions struct {
+	Mode        string
+	Addr        string
+	Middlewares []string
+	PingTimeout time.Duration `mapstructure:"ping-timeout"`
+	Healthz     bool
+	Metrics     bool
+	Profiling   bool
+}
 
 // HTTPServer is both a HTTPServer and a gin.Engine.
 type HTTPServer struct {
@@ -39,7 +59,12 @@ type HTTPServer struct {
 var _ Servable = &HTTPServer{}
 
 // NewHTTPServer builds an HTTPServer.
-func NewHTTPServer(opts *config.HTTPOptions) *HTTPServer {
+func NewHTTPServer() (*HTTPServer, error) {
+	opts, err := getHTTPOptions()
+	if err != nil {
+		return nil, err
+	}
+
 	gin.SetMode(opts.Mode)
 
 	s := &HTTPServer{
@@ -55,7 +80,7 @@ func NewHTTPServer(opts *config.HTTPOptions) *HTTPServer {
 	s.setupMiddlewares()
 	s.setupAPIs()
 
-	return s
+	return s, nil
 }
 
 // Run runs the HTTP server and conducts a self health check.
@@ -132,4 +157,21 @@ func (s *HTTPServer) ping(ctx context.Context) error {
 		default:
 		}
 	}
+}
+
+func getHTTPOptions() (*HTTPOptions, error) {
+	opts := &HTTPOptions{
+		Mode:        DefaultHTTPMode,
+		Addr:        DefaultHTTPAddr,
+		Middlewares: []string{},
+		PingTimeout: DefaultHTTPPingTimeout,
+		Healthz:     DefaultHealthz,
+		Metrics:     DefaultMetrics,
+		Profiling:   DefaultProfiling,
+	}
+
+	if err := viper.UnmarshalKey(ConfKeyHTTP, opts); err != nil {
+		return nil, err
+	}
+	return opts, nil
 }

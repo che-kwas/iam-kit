@@ -5,7 +5,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/che-kwas/iam-kit/config"
 	"github.com/che-kwas/iam-kit/shutdown"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
@@ -21,27 +20,19 @@ type Server struct {
 	httpServer *HTTPServer
 	grpcServer *GRPCServer
 	gs         *shutdown.GracefulShutdown
+
+	// err is used to eliminate error checking hell
+	err error
 }
 
-func NewServer(
-	name string,
-	httpOpts *config.HTTPOptions,
-	grpcOpts *config.GRPCOptions,
-) (*Server, error) {
-	gs := shutdown.New(10 * time.Second)
-	httpServer := NewHTTPServer(httpOpts)
-	grpcServer := NewGRPCServer(grpcOpts)
-	gs.AddShutdownCallback(shutdown.ShutdownFunc(httpServer.Shutdown))
-	gs.AddShutdownCallback(shutdown.ShutdownFunc(grpcServer.Shutdown))
-
+func NewServer(name string) (*Server, error) {
 	server := &Server{
-		name:       name,
-		httpServer: httpServer,
-		grpcServer: grpcServer,
-		gs:         gs,
+		name: name,
+		gs:   shutdown.New(10 * time.Second),
 	}
+	server.buildHTTP().buildGRPC()
 
-	return server, nil
+	return server, server.err
 }
 
 func (s *Server) Run() error {
@@ -55,4 +46,22 @@ func (s *Server) Run() error {
 
 func (s *Server) InitRouter(initFunc func(g *gin.Engine)) {
 	initFunc(s.httpServer.Engine)
+}
+
+func (s *Server) buildHTTP() *Server {
+	s.httpServer, s.err = NewHTTPServer()
+	s.gs.AddShutdownCallback(shutdown.ShutdownFunc(s.httpServer.Shutdown))
+
+	return s
+}
+
+func (s *Server) buildGRPC() *Server {
+	if s.err != nil {
+		return s
+	}
+
+	s.grpcServer, s.err = NewGRPCServer()
+	s.gs.AddShutdownCallback(shutdown.ShutdownFunc(s.grpcServer.Shutdown))
+
+	return s
 }
