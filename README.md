@@ -25,18 +25,16 @@
 [error_code_base.md](error_code_base.md)
 
 ## TODO
+- logger最佳实践
+  + withValues
+  + WithContext
+  + FromContext
+  + global singleton
+  + L()
+  + rotate
 
-1. init最佳实践
-2. config最佳实践
-  - load config独立出来，不只是server需要load
-3. errors最佳实践（参考kratos公众号文章）
-4. logger最佳实践
-  - withValues
-  - WithContext
-  - FromContext
-  - global singleton
-  - L()
-5. mysql logger
+- errors最佳实践
+
 6. test
 7. policy audit
 8. migrate
