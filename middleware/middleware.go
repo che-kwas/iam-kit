@@ -18,6 +18,7 @@ const corsMaxAge = 12
 // Middlewares store default middlewares.
 var Middlewares = map[string]gin.HandlerFunc{
 	"recovery":  gin.Recovery(),
+	"logger":    gin.Logger(),
 	"secure":    Secure,
 	"options":   Options,
 	"nocache":   NoCache,
