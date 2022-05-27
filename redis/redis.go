@@ -1,4 +1,4 @@
-// Package redis defines the global redis instance.
+// Package redis is the redis instance builder.
 package redis // import "github.com/che-kwas/iam-kit/redis"
 
 import (

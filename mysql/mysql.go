@@ -1,4 +1,4 @@
-// Package mysql defines the global mysql instance.
+// Package mysql is the mysql instance builder.
 package mysql // import "github.com/che-kwas/iam-kit/mysql"
 
 import (

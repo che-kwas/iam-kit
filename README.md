@@ -25,13 +25,6 @@
 [error_code_base.md](error_code_base.md)
 
 ## TODO
-- logger最佳实践
-  + withValues
-  + WithContext
-  + FromContext
-  + global singleton
-  + L()
-  + rotate
 
 - errors最佳实践
 
