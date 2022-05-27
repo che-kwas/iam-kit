@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	ConfKeyGRPC = "grpc"
+	confKeyGRPC = "grpc"
 
-	DefaultGRPCAddr       = "0.0.0.0:8001"
-	DefaultGRPCMaxMsgSize = 4 * 1024 * 1024
+	defaultGRPCAddr       = "0.0.0.0:8001"
+	defaultGRPCMaxMsgSize = 4 * 1024 * 1024
 )
 
 // GRPCOptions defines options for building a GRPCServer.
@@ -61,9 +61,9 @@ func (s *GRPCServer) Shutdown(_ context.Context) error {
 }
 
 func getGRPCOptions() (*GRPCOptions, error) {
-	opts := &GRPCOptions{Addr: DefaultGRPCAddr, MaxMsgSize: DefaultGRPCMaxMsgSize}
+	opts := &GRPCOptions{Addr: defaultGRPCAddr, MaxMsgSize: defaultGRPCMaxMsgSize}
 
-	if err := viper.UnmarshalKey(ConfKeyGRPC, opts); err != nil {
+	if err := viper.UnmarshalKey(confKeyGRPC, opts); err != nil {
 		return nil, err
 	}
 	return opts, nil

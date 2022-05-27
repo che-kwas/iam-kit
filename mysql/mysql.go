@@ -12,12 +12,12 @@ import (
 )
 
 const (
-	ConfKey = "mysql"
+	confKey = "mysql"
 
-	DefaultAddr            = "127.0.0.1:3306"
-	DefaultMaxIdleConns    = 100
-	DefaultMaxOpenConns    = 100
-	DefaultMaxConnLifeTime = time.Duration(10 * time.Second)
+	defaultAddr            = "127.0.0.1:3306"
+	defaultMaxIdleConns    = 100
+	defaultMaxOpenConns    = 100
+	defaultMaxConnLifeTime = time.Duration(10 * time.Second)
 )
 
 // MysqlOptions defines options for building a mysql instance.
@@ -60,13 +60,13 @@ func NewMysqlIns() (*gorm.DB, error) {
 
 func getMysqlOpts() (*MysqlOptions, error) {
 	opts := &MysqlOptions{
-		Addr:            DefaultAddr,
-		MaxIdleConns:    DefaultMaxIdleConns,
-		MaxOpenConns:    DefaultMaxOpenConns,
-		MaxConnLifeTime: DefaultMaxConnLifeTime,
+		Addr:            defaultAddr,
+		MaxIdleConns:    defaultMaxIdleConns,
+		MaxOpenConns:    defaultMaxOpenConns,
+		MaxConnLifeTime: defaultMaxConnLifeTime,
 	}
 
-	if err := viper.UnmarshalKey(ConfKey, opts); err != nil {
+	if err := viper.UnmarshalKey(confKey, opts); err != nil {
 		return nil, err
 	}
 	return opts, nil

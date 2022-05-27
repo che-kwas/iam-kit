@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	ConfKey = "redis"
+	confKey = "redis"
 
-	DefaultAddr     = "127.0.0.1:6379"
-	DefaultDatabase = 0
+	defaultAddr     = "127.0.0.1:6379"
+	defaultDatabase = 0
 )
 
 // RedisOptions defines options for building a redis client.
@@ -43,11 +43,11 @@ func NewRedisIns() (redis.UniversalClient, error) {
 
 func getRedisOpts() (*RedisOptions, error) {
 	opts := &RedisOptions{
-		Addrs:    []string{DefaultAddr},
-		Database: DefaultDatabase,
+		Addrs:    []string{defaultAddr},
+		Database: defaultDatabase,
 	}
 
-	if err := viper.UnmarshalKey(ConfKey, opts); err != nil {
+	if err := viper.UnmarshalKey(confKey, opts); err != nil {
 		return nil, err
 	}
 	return opts, nil

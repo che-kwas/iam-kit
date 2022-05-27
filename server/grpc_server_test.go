@@ -11,5 +11,5 @@ func Test_NewGRPCServer(t *testing.T) {
 
 	server, err := NewGRPCServer()
 	assert.Nil(err)
-	assert.Equal(DefaultGRPCAddr, server.addr)
+	assert.Equal(defaultGRPCAddr, server.addr)
 }

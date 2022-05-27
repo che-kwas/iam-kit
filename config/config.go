@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	EnvPrefix          = "IAM"
-	DefaultConfigPaths = []string{".", "./configs", "/etc/iam"}
+	envPrefix          = "IAM"
+	defaultConfigPaths = []string{".", "./configs", "/etc/iam"}
 )
 
 // LoadConfig loads a config from cfgPath or from <DefaultConfigPaths>/<appName>.yaml.
@@ -24,7 +24,7 @@ func LoadConfig(cfgPath, appName string) error {
 	if cfgPath != "" {
 		viper.SetConfigFile(cfgPath)
 	} else {
-		for _, path := range DefaultConfigPaths {
+		for _, path := range defaultConfigPaths {
 			viper.AddConfigPath(path)
 		}
 
@@ -33,7 +33,7 @@ func LoadConfig(cfgPath, appName string) error {
 	viper.SetConfigType("yaml")
 
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix(EnvPrefix)
+	viper.SetEnvPrefix(envPrefix)
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
 
 	return viper.ReadInConfig()

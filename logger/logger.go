@@ -2,6 +2,7 @@
 package logger
 
 import (
+	"context"
 	"log"
 
 	"github.com/spf13/viper"
@@ -10,15 +11,27 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+// Defines common log fields.
 const (
-	ConfKey = "log"
-
-	DefaultLevel      = "debug"
-	DefaultEncoding   = "console"
-	DefaultOutputPath = "/var/log/iam-apiserver/iam-apiserver.log"
-	DefaultMaxSize    = 100
-	DefaultMaxAge     = 30
+	KeyRequestID   string = "requestID"
+	KeyUsername    string = "username"
+	KeyWatcherName string = "watcher"
 )
+
+// Defines config default values.
+const (
+	confKey = "log"
+
+	defaultLevel      = "debug"
+	defaultEncoding   = "console"
+	defaultOutputPath = "/var/log/iam-apiserver/iam-apiserver.log"
+	defaultMaxSize    = 100
+	defaultMaxAge     = 30
+)
+
+type key int
+
+const ctxKey key = 0
 
 // LogOptions defines options for building a logger.
 type LogOptions struct {
@@ -30,33 +43,68 @@ type LogOptions struct {
 	MaxBackups int    `mapstructure:"max-backups"`
 }
 
-// NewLogger creates a zap sugared logger.
-func NewLogger() (*zap.SugaredLogger, error) {
+type Logger struct {
+	*zap.SugaredLogger
+}
+
+// NewLogger creates a logger.
+func NewLogger() *Logger {
 	opts, err := getLogOpts()
 	if err != nil {
-		return nil, err
+		log.Fatal("get log options error: ", err)
 	}
-	log.Printf("NewLogger, opts: %+v", opts)
 
 	encoder := newEncoder(opts.Encoding)
 	ws := newWriteSyncer(opts)
 	level := newLevel(opts.Level)
 	core := zapcore.NewCore(encoder, ws, level)
-	logger := zap.New(core, zap.AddCaller())
+	logger := &Logger{zap.New(core, zap.AddCaller()).Sugar()}
+	logger.Debugf("NewLogger, opts: %+v", opts)
 
-	return logger.Sugar(), nil
+	return logger
+}
+
+// FromContext returns the logger in the context.
+func FromContext(ctx context.Context) *Logger {
+	if ctx != nil {
+		if logger := ctx.Value(ctxKey); logger != nil {
+			return logger.(*Logger)
+		}
+	}
+
+	return NewLogger()
+}
+
+// WithContext puts the logger into the context.
+func (l *Logger) WithContext(ctx context.Context) context.Context {
+	return context.WithValue(ctx, ctxKey, l)
+}
+
+// X adds iam-specific fields to the loggin context.
+func (l *Logger) X(ctx context.Context) *Logger {
+	if requestID := ctx.Value(KeyRequestID); requestID != nil {
+		l.SugaredLogger = l.With(KeyRequestID, requestID)
+	}
+	if username := ctx.Value(KeyUsername); username != nil {
+		l.SugaredLogger = l.With(KeyUsername, username)
+	}
+	if watcherName := ctx.Value(KeyWatcherName); watcherName != nil {
+		l.SugaredLogger = l.With(KeyWatcherName, watcherName)
+	}
+
+	return l
 }
 
 func getLogOpts() (*LogOptions, error) {
 	opts := &LogOptions{
-		Level:      DefaultLevel,
-		Encoding:   DefaultEncoding,
-		OutputPath: DefaultOutputPath,
-		MaxSize:    DefaultMaxSize,
-		MaxAge:     DefaultMaxAge,
+		Level:      defaultLevel,
+		Encoding:   defaultEncoding,
+		OutputPath: defaultOutputPath,
+		MaxSize:    defaultMaxSize,
+		MaxAge:     defaultMaxAge,
 	}
 
-	if err := viper.UnmarshalKey(ConfKey, opts); err != nil {
+	if err := viper.UnmarshalKey(confKey, opts); err != nil {
 		return nil, err
 	}
 	return opts, nil

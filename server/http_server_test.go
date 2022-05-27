@@ -11,10 +11,10 @@ func Test_NewHTTPServer(t *testing.T) {
 
 	server, err := NewHTTPServer()
 	assert.Nil(err)
-	assert.Equal(DefaultHTTPAddr, server.addr)
+	assert.Equal(defaultHTTPAddr, server.addr)
 	assert.Equal([]string{}, server.middlewares)
-	assert.Equal(DefaultHTTPPingTimeout, server.pingTimeout)
-	assert.Equal(DefaultHealthz, server.healthz)
-	assert.Equal(DefaultMetrics, server.metrics)
-	assert.Equal(DefaultProfiling, server.profiling)
+	assert.Equal(defaultHTTPPingTimeout, server.pingTimeout)
+	assert.Equal(defaultHealthz, server.healthz)
+	assert.Equal(defaultMetrics, server.metrics)
+	assert.Equal(defaultProfiling, server.profiling)
 }

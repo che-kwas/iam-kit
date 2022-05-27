@@ -17,19 +17,19 @@ import (
 )
 
 const (
-	ConfKeyHTTP = "http"
+	confKeyHTTP = "http"
 
-	DefaultHTTPMode        = "release"
-	DefaultHTTPAddr        = "0.0.0.0:8000"
-	DefaultHTTPPingTimeout = time.Duration(10 * time.Second)
-	DefaultHealthz         = true
-	DefaultMetrics         = false
-	DefaultProfiling       = false
+	defaultHTTPMode        = "release"
+	defaultHTTPAddr        = "0.0.0.0:8000"
+	defaultHTTPPingTimeout = time.Duration(10 * time.Second)
+	defaultHealthz         = true
+	defaultMetrics         = false
+	defaultProfiling       = false
 
-	RouterVersion   = "/version"
-	RouterHealthz   = "/healthz"
-	RouterMetrics   = "/metrics"
-	RouterProfiling = "/debug/pprof"
+	routerVersion   = "/version"
+	routerHealthz   = "/healthz"
+	routerMetrics   = "/metrics"
+	routerProfiling = "/debug/pprof"
 )
 
 // HTTPOptions defines options for building an HTTPServer.
@@ -123,7 +123,7 @@ func (s *HTTPServer) setupMiddlewares() {}
 
 func (s *HTTPServer) setupAPIs() {
 	if s.healthz {
-		s.GET(RouterHealthz, func(c *gin.Context) {
+		s.GET(routerHealthz, func(c *gin.Context) {
 			httputil.WriteResponse(c, nil, map[string]string{"status": "OK"})
 		})
 	}
@@ -132,7 +132,7 @@ func (s *HTTPServer) setupAPIs() {
 }
 
 func (s *HTTPServer) ping(ctx context.Context) error {
-	url := fmt.Sprintf("http://%s%s", s.addr, RouterHealthz)
+	url := fmt.Sprintf("http://%s%s", s.addr, routerHealthz)
 	url = strings.Replace(url, "0.0.0.0", "127.0.0.1", 1)
 
 	for {
@@ -161,16 +161,16 @@ func (s *HTTPServer) ping(ctx context.Context) error {
 
 func getHTTPOptions() (*HTTPOptions, error) {
 	opts := &HTTPOptions{
-		Mode:        DefaultHTTPMode,
-		Addr:        DefaultHTTPAddr,
+		Mode:        defaultHTTPMode,
+		Addr:        defaultHTTPAddr,
 		Middlewares: []string{},
-		PingTimeout: DefaultHTTPPingTimeout,
-		Healthz:     DefaultHealthz,
-		Metrics:     DefaultMetrics,
-		Profiling:   DefaultProfiling,
+		PingTimeout: defaultHTTPPingTimeout,
+		Healthz:     defaultHealthz,
+		Metrics:     defaultMetrics,
+		Profiling:   defaultProfiling,
 	}
 
-	if err := viper.UnmarshalKey(ConfKeyHTTP, opts); err != nil {
+	if err := viper.UnmarshalKey(confKeyHTTP, opts); err != nil {
 		return nil, err
 	}
 	return opts, nil
