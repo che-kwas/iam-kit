@@ -28,11 +28,6 @@ const (
 	defaultMaxAge     = 30
 )
 
-type key int
-
-// ctxKey is the key in the context.
-const ctxKey key = 0
-
 // LogOptions defines options for building a logger.
 type LogOptions struct {
 	Level      string
@@ -55,22 +50,6 @@ func NewLogger() *Logger {
 // NewInfoLogger creates a logger with INFO level.
 func NewInfoLogger() *Logger {
 	return newLoggerWithLevel("info")
-}
-
-// FromContext returns the logger in the context.
-func FromContext(ctx context.Context) *Logger {
-	if ctx != nil {
-		if logger := ctx.Value(ctxKey); logger != nil {
-			return logger.(*Logger)
-		}
-	}
-
-	return NewLogger().Named("unknown-ctx")
-}
-
-// WithContext puts the logger into the context.
-func (l *Logger) WithContext(ctx context.Context) context.Context {
-	return context.WithValue(ctx, ctxKey, l)
 }
 
 // X adds requestID and username fields to the logging context.
