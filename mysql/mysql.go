@@ -19,6 +19,9 @@ const (
 	defaultMaxIdleConns    = 100
 	defaultMaxOpenConns    = 100
 	defaultMaxConnLifeTime = time.Duration(10 * time.Second)
+	defaultSlowThreshold   = time.Duration(200 * time.Millisecond)
+	// GORM log level, 1: silent, 2:error, 3:warn, 4:info
+	defaultLogLevel = 1
 )
 
 // MysqlOptions defines options for building a mysql instance.
@@ -30,6 +33,8 @@ type MysqlOptions struct {
 	MaxIdleConns    int           `mapstructure:"max-idle-conns"`
 	MaxOpenConns    int           `mapstructure:"max-open-conns"`
 	MaxConnLifeTime time.Duration `mapstructure:"max-connection-life-time"`
+	SlowThreshold   time.Duration `mapstructure:"slow-threshold"`
+	LogLevel        int           `mapstructure:"log-level"`
 }
 
 // NewMysqlIns creates a gorm db instance.
@@ -45,7 +50,9 @@ func NewMysqlIns() (*gorm.DB, error) {
 		opts.Password,
 		opts.Addr,
 		opts.Database)
-	db, err := gorm.Open(mysql.Open(dsn))
+
+	cfg := &gorm.Config{Logger: newLogger(opts.SlowThreshold, opts.LogLevel)}
+	db, err := gorm.Open(mysql.Open(dsn), cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -65,6 +72,8 @@ func getMysqlOpts() (*MysqlOptions, error) {
 		MaxIdleConns:    defaultMaxIdleConns,
 		MaxOpenConns:    defaultMaxOpenConns,
 		MaxConnLifeTime: defaultMaxConnLifeTime,
+		SlowThreshold:   defaultSlowThreshold,
+		LogLevel:        defaultLogLevel,
 	}
 
 	if err := viper.UnmarshalKey(confKey, opts); err != nil {

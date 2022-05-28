@@ -3,6 +3,7 @@ package logger
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -48,19 +49,12 @@ type Logger struct {
 
 // NewLogger creates a logger.
 func NewLogger() *Logger {
-	opts, err := getLogOpts()
-	if err != nil {
-		panic(err)
-	}
+	return newLoggerWithLevel("")
+}
 
-	encoder := newEncoder(opts.Encoding)
-	ws := newWriteSyncer(opts)
-	level := newLevel(opts.Level)
-	core := zapcore.NewCore(encoder, ws, level)
-	logger := &Logger{zap.New(core, zap.AddCaller()).Sugar()}
-	logger.Debugf("NewLogger, opts: %+v", opts)
-
-	return logger
+// NewInfoLogger creates a logger with INFO level.
+func NewInfoLogger() *Logger {
+	return newLoggerWithLevel("info")
 }
 
 // FromContext returns the logger in the context.
@@ -71,7 +65,7 @@ func FromContext(ctx context.Context) *Logger {
 		}
 	}
 
-	return NewLogger()
+	return NewLogger().Named("unknown-ctx")
 }
 
 // WithContext puts the logger into the context.
@@ -82,13 +76,48 @@ func (l *Logger) WithContext(ctx context.Context) context.Context {
 // X adds requestID and username fields to the logging context.
 func (l *Logger) X(ctx context.Context) *Logger {
 	if requestID := ctx.Value(KeyRequestID); requestID != nil {
-		l.SugaredLogger = l.With(KeyRequestID, requestID)
+		l = l.With(KeyRequestID, requestID)
 	}
 	if username := ctx.Value(KeyUsername); username != nil {
-		l.SugaredLogger = l.With(KeyUsername, username)
+		l = l.With(KeyUsername, username)
 	}
 
 	return l
+}
+
+// With adds a variadic number of fields to the logging context.
+func (l *Logger) With(fields ...interface{}) *Logger {
+	return &Logger{l.SugaredLogger.With(fields...)}
+}
+
+// Named adds a new path segment to the logger's name. Segments are joined by
+// periods. By default, Loggers are unnamed.
+func (l *Logger) Named(s string) *Logger {
+	return &Logger{l.SugaredLogger.Named(s)}
+}
+
+// Printf logs a message at level Print on the compatibleLogger.
+func (l *Logger) Printf(format string, args ...interface{}) {
+	l.Info(fmt.Sprintf(format, args...))
+}
+
+func newLoggerWithLevel(level string) *Logger {
+	opts, err := getLogOpts()
+	if err != nil {
+		panic(err)
+	}
+	if level != "" {
+		opts.Level = level
+	}
+
+	encoder := newEncoder(opts.Encoding)
+	ws := newWriteSyncer(opts)
+	lv := newLevel(opts.Level)
+	core := zapcore.NewCore(encoder, ws, lv)
+	logger := &Logger{zap.New(core, zap.AddCaller()).Sugar()}
+	logger.Debugf("NewLogger, opts: %+v", opts)
+
+	return logger
 }
 
 func getLogOpts() (*LogOptions, error) {
