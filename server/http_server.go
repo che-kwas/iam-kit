@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/che-kwas/iam-kit/httputil"
+	"github.com/che-kwas/iam-kit/logger"
 )
 
 const (
@@ -64,6 +64,7 @@ func NewHTTPServer() (*HTTPServer, error) {
 	if err != nil {
 		return nil, err
 	}
+	logger.L().Debugf("New http server with options: %+v", opts)
 
 	gin.SetMode(opts.Mode)
 
@@ -92,13 +93,12 @@ func (s *HTTPServer) Run() error {
 
 	var eg errgroup.Group
 	eg.Go(func() error {
-		log.Printf("[HTTP] server start to listening on %s", s.addr)
+		logger.L().Infof("[HTTP] server start to listening on %s", s.addr)
 
 		if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			return err
 		}
 
-		log.Printf("[HTTP] server on %s stopped", s.addr)
 		return nil
 	})
 
@@ -143,12 +143,12 @@ func (s *HTTPServer) ping(ctx context.Context) error {
 
 		resp, err := http.DefaultClient.Do(req)
 		if err == nil && resp.StatusCode == http.StatusOK {
-			log.Print("Server self health check success.")
+			logger.L().Debug("[health check] success.")
 			resp.Body.Close()
 			return nil
 		}
 
-		log.Print("Waiting for the router, retry in 1 second.")
+		logger.L().Debug("[health check] waiting for the router, retry in 1 second.")
 		time.Sleep(1 * time.Second)
 
 		select {

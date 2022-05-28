@@ -3,12 +3,13 @@ package shutdown // import "github.com/che-kwas/iam-kit/shutdown"
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/che-kwas/iam-kit/logger"
 )
 
 // ShutdownCallback is an interface you have to implement for callbacks.
@@ -76,7 +77,7 @@ func (gs *GracefulShutdown) waitCallbacks() {
 		go func(callback ShutdownCallback) {
 			defer wg.Done()
 			if err := callback.OnShutdown(ctx); err != nil {
-				log.Fatal("OnShutdown: ", err)
+				logger.L().Fatal("Failed to gracefully shutdown: ", err)
 			}
 		}(callback)
 	}

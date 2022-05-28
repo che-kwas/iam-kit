@@ -2,10 +2,10 @@
 package redis // import "github.com/che-kwas/iam-kit/redis"
 
 import (
-	"log"
-
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
+
+	"github.com/che-kwas/iam-kit/logger"
 )
 
 const (
@@ -30,7 +30,7 @@ func NewRedisIns() (redis.UniversalClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("NewRedisIns, opts: %+v", opts)
+	logger.L().Debugf("New redis instance with options: %+v", opts)
 
 	rdb := redis.NewUniversalClient(&redis.UniversalOptions{
 		Addrs:    opts.Addrs,

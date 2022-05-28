@@ -5,9 +5,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/che-kwas/iam-kit/shutdown"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
+
+	"github.com/che-kwas/iam-kit/shutdown"
 )
 
 type Servable interface {

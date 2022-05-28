@@ -3,7 +3,6 @@ package config // import "github.com/che-kwas/iam-kit/config"
 
 import (
 	"errors"
-	"log"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -16,7 +15,6 @@ var (
 
 // LoadConfig loads a config from cfgPath or from <DefaultConfigPaths>/<appName>.yaml.
 func LoadConfig(cfgPath, appName string) error {
-	log.Printf("Loading config, cfgPath = %s, appName = %s", cfgPath, appName)
 	if cfgPath == "" && appName == "" {
 		return errors.New("no configuration file specified")
 	}

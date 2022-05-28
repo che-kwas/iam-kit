@@ -2,11 +2,12 @@ package server
 
 import (
 	"context"
-	"log"
 	"net"
 
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
+
+	"github.com/che-kwas/iam-kit/logger"
 )
 
 const (
@@ -35,6 +36,7 @@ func NewGRPCServer() (*GRPCServer, error) {
 	if err != nil {
 		return nil, err
 	}
+	logger.L().Debugf("New grpc server with options: %+v", opts)
 
 	grpcOpts := []grpc.ServerOption{grpc.MaxRecvMsgSize(opts.MaxMsgSize)}
 	server := grpc.NewServer(grpcOpts...)
@@ -44,7 +46,7 @@ func NewGRPCServer() (*GRPCServer, error) {
 
 // Run runs the HTTP server and conducts a self health check.
 func (s *GRPCServer) Run() error {
-	log.Printf("[gRPC] server start to listening on %s", s.addr)
+	logger.L().Infof("[gRPC] server start to listening on %s", s.addr)
 
 	listen, err := net.Listen("tcp", s.addr)
 	if err != nil {

@@ -3,7 +3,6 @@ package logger
 
 import (
 	"context"
-	"log"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -31,6 +30,7 @@ const (
 
 type key int
 
+// ctxKey is the key in the context.
 const ctxKey key = 0
 
 // LogOptions defines options for building a logger.
@@ -51,7 +51,7 @@ type Logger struct {
 func NewLogger() *Logger {
 	opts, err := getLogOpts()
 	if err != nil {
-		log.Fatal("get log options error: ", err)
+		panic(err)
 	}
 
 	encoder := newEncoder(opts.Encoding)

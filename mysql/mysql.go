@@ -3,12 +3,13 @@ package mysql // import "github.com/che-kwas/iam-kit/mysql"
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/che-kwas/iam-kit/logger"
 )
 
 const (
@@ -37,7 +38,7 @@ func NewMysqlIns() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("NewMysqlIns, opts: %+v", opts)
+	logger.L().Debugf("New mysql instance with options: %+v", opts)
 
 	dsn := fmt.Sprintf(`%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true&loc=Local`,
 		opts.Username,
