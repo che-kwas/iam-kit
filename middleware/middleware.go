@@ -13,5 +13,6 @@ var Middlewares = map[string]gin.HandlerFunc{
 	"nocache":   NoCache(),
 	"cors":      Cors(),
 	"requestid": RequestID(),
+	"context":   Context(),
 	"logger":    Logger(),
 }

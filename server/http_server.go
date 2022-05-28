@@ -14,6 +14,7 @@ import (
 
 	"github.com/che-kwas/iam-kit/httputil"
 	"github.com/che-kwas/iam-kit/logger"
+	"github.com/che-kwas/iam-kit/middleware"
 )
 
 const (
@@ -119,7 +120,11 @@ func (s *HTTPServer) Shutdown(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }
 
-func (s *HTTPServer) setupMiddlewares() {}
+func (s *HTTPServer) setupMiddlewares() {
+	for _, m := range s.middlewares {
+		s.Use(middleware.Middlewares[m])
+	}
+}
 
 func (s *HTTPServer) setupAPIs() {
 	if s.healthz {
@@ -173,5 +178,11 @@ func getHTTPOptions() (*HTTPOptions, error) {
 	if err := viper.UnmarshalKey(confKeyHTTP, opts); err != nil {
 		return nil, err
 	}
+
+	if len(opts.Middlewares) == 0 {
+		opts.Middlewares = []string{"recovery", "secure", "options", "nocache",
+			"cors", "requestid", "context", "logger"}
+	}
+
 	return opts, nil
 }
