@@ -12,9 +12,8 @@ import (
 
 // Defines common log fields.
 const (
-	KeyRequestID   string = "requestID"
-	KeyUsername    string = "username"
-	KeyWatcherName string = "watcher"
+	KeyRequestID string = "requestID"
+	KeyUsername  string = "username"
 )
 
 // Defines config default values.
@@ -80,16 +79,13 @@ func (l *Logger) WithContext(ctx context.Context) context.Context {
 	return context.WithValue(ctx, ctxKey, l)
 }
 
-// X adds iam-specific fields to the loggin context.
+// X adds requestID and username fields to the logging context.
 func (l *Logger) X(ctx context.Context) *Logger {
 	if requestID := ctx.Value(KeyRequestID); requestID != nil {
 		l.SugaredLogger = l.With(KeyRequestID, requestID)
 	}
 	if username := ctx.Value(KeyUsername); username != nil {
 		l.SugaredLogger = l.With(KeyUsername, username)
-	}
-	if watcherName := ctx.Value(KeyWatcherName); watcherName != nil {
-		l.SugaredLogger = l.With(KeyWatcherName, watcherName)
 	}
 
 	return l

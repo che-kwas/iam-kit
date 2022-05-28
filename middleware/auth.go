@@ -4,9 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// UsernameKey defines the key in gin context which represents the owner of the secret.
-const UsernameKey = "username"
-
 // AuthStrategy is used to do authentication.
 type AuthStrategy interface {
 	AuthFunc() gin.HandlerFunc
