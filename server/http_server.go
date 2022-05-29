@@ -65,7 +65,7 @@ func NewHTTPServer() (*HTTPServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger.L().Debugf("New http server with options: %+v", opts)
+	logger.L().Debugf("new HTTP server with options: %+v", opts)
 
 	gin.SetMode(opts.Mode)
 
@@ -148,12 +148,12 @@ func (s *HTTPServer) ping(ctx context.Context) error {
 
 		resp, err := http.DefaultClient.Do(req)
 		if err == nil && resp.StatusCode == http.StatusOK {
-			logger.L().Debug("[health check] success.")
+			logger.L().Debug("[health check] success")
 			resp.Body.Close()
 			return nil
 		}
 
-		logger.L().Debug("[health check] waiting for the router, retry in 1 second.")
+		logger.L().Debug("[health check] waiting for the router, retry in 1 second")
 		time.Sleep(1 * time.Second)
 
 		select {

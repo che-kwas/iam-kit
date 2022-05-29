@@ -30,7 +30,7 @@ func NewRedisIns() (redis.UniversalClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger.L().Debugf("New redis instance with options: %+v", opts)
+	logger.L().Debugf("new redis instance with options: %+v", opts)
 
 	rdb := redis.NewUniversalClient(&redis.UniversalOptions{
 		Addrs:    opts.Addrs,

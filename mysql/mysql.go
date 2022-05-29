@@ -43,7 +43,7 @@ func NewMysqlIns() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger.L().Debugf("New mysql instance with options: %+v", opts)
+	logger.L().Debugf("new mysql instance with options: %+v", opts)
 
 	dsn := fmt.Sprintf(`%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true&loc=Local`,
 		opts.Username,

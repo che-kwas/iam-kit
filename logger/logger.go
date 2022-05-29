@@ -94,7 +94,7 @@ func newLoggerWithLevel(level string) *Logger {
 	lv := newLevel(opts.Level)
 	core := zapcore.NewCore(encoder, ws, lv)
 	logger := &Logger{zap.New(core, zap.AddCaller()).Sugar()}
-	logger.Debugf("NewLogger, opts: %+v", opts)
+	logger.Debugf("new logger with options: %+v", opts)
 
 	return logger
 }

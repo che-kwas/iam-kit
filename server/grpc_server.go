@@ -36,7 +36,7 @@ func NewGRPCServer() (*GRPCServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger.L().Debugf("New grpc server with options: %+v", opts)
+	logger.L().Debugf("new gRPC server with options: %+v", opts)
 
 	grpcOpts := []grpc.ServerOption{grpc.MaxRecvMsgSize(opts.MaxMsgSize)}
 	server := grpc.NewServer(grpcOpts...)

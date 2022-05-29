@@ -77,7 +77,7 @@ func (gs *GracefulShutdown) waitCallbacks() {
 		go func(callback ShutdownCallback) {
 			defer wg.Done()
 			if err := callback.OnShutdown(ctx); err != nil {
-				logger.L().Fatal("Failed to gracefully shutdown: ", err)
+				logger.L().Fatal("failed to gracefully shutdown: ", err)
 			}
 		}(callback)
 	}
