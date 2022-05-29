@@ -47,23 +47,12 @@ func Logger() gin.HandlerFunc {
 }
 
 func formatLogParams(param gin.LogFormatterParams) string {
-	var statusColor, methodColor, resetColor string
-	if param.IsOutputColor() {
-		statusColor = param.StatusCodeColor()
-		methodColor = param.MethodColor()
-		resetColor = param.ResetColor()
-	}
 
-	if param.Latency > time.Minute {
-		// Truncate in a golang < 1.8 safe way
-		param.Latency = param.Latency - param.Latency%time.Second
-	}
-
-	return fmt.Sprintf("%s%3d%s - [%s] \"%v %s%s%s %s\" %s",
-		statusColor, param.StatusCode, resetColor,
+	return fmt.Sprintf("%3d - [%s] \"%v %s %s\" %s",
+		param.StatusCode,
 		param.ClientIP,
 		param.Latency,
-		methodColor, param.Method, resetColor,
+		param.Method,
 		param.Path,
 		param.ErrorMessage,
 	)

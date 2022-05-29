@@ -3,14 +3,18 @@ package logger
 import "sync"
 
 var (
-	mu sync.RWMutex
-	gl = NewLogger()
+	gl   *Logger
+	once sync.Once
 )
 
-// L returns the global Logger.
+// L returns the global logger.
 func L() *Logger {
-	mu.RLock()
-	l := gl
-	mu.RUnlock()
-	return l
+	if gl != nil {
+		return gl
+	}
+
+	once.Do(func() {
+		gl = NewLogger()
+	})
+	return gl
 }

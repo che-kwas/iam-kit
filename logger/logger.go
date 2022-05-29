@@ -30,12 +30,14 @@ const (
 
 // LogOptions defines options for building a logger.
 type LogOptions struct {
-	Level      string
-	Encoding   string
-	OutputPath string `mapstructure:"output-path"`
-	MaxSize    int    `mapstructure:"max-size"`
-	MaxAge     int    `mapstructure:"max-age"`
-	MaxBackups int    `mapstructure:"max-backups"`
+	Name          string
+	Level         string
+	Encoding      string
+	DisableCaller bool   `mapstructure:"disable-caller"`
+	OutputPath    string `mapstructure:"output-path"`
+	MaxSize       int    `mapstructure:"max-size"`
+	MaxAge        int    `mapstructure:"max-age"`
+	MaxBackups    int    `mapstructure:"max-backups"`
 }
 
 type Logger struct {
@@ -44,12 +46,19 @@ type Logger struct {
 
 // NewLogger creates a logger.
 func NewLogger() *Logger {
-	return newLoggerWithLevel("")
+	opts, _ := getLogOpts()
+
+	return newLoggerWithOpts(opts)
 }
 
-// NewInfoLogger creates a logger with INFO level.
-func NewInfoLogger() *Logger {
-	return newLoggerWithLevel("info")
+// NewGormLogger creates a gorm logger.
+func NewGormLogger() *Logger {
+	opts, _ := getLogOpts()
+	opts.Name = "gorm"
+	opts.Level = "info"
+	opts.DisableCaller = true
+
+	return newLoggerWithOpts(opts)
 }
 
 // X adds requestID and username fields to the logging context.
@@ -80,20 +89,14 @@ func (l *Logger) Printf(format string, args ...interface{}) {
 	l.Info(fmt.Sprintf(format, args...))
 }
 
-func newLoggerWithLevel(level string) *Logger {
-	opts, err := getLogOpts()
-	if err != nil {
-		panic(err)
-	}
-	if level != "" {
-		opts.Level = level
-	}
-
+func newLoggerWithOpts(opts *LogOptions) *Logger {
 	encoder := newEncoder(opts.Encoding)
 	ws := newWriteSyncer(opts)
 	lv := newLevel(opts.Level)
+
 	core := zapcore.NewCore(encoder, ws, lv)
-	logger := &Logger{zap.New(core, zap.AddCaller()).Sugar()}
+	zaplog := zap.New(core, zap.WithCaller(!opts.DisableCaller))
+	logger := &Logger{zaplog.Sugar().Named(opts.Name)}
 	logger.Debugf("new logger with options: %+v", opts)
 
 	return logger
