@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AuthStrategy is used to do authentication.
+// AuthStrategy defines the behavior of a authenticator.
 type AuthStrategy interface {
 	AuthFunc() gin.HandlerFunc
 }

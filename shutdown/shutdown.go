@@ -12,9 +12,9 @@ import (
 	"github.com/che-kwas/iam-kit/logger"
 )
 
-// ShutdownCallback is an interface you have to implement for callbacks.
+// ShutdownCallback defines the behavior of a shutdown callback.
 type ShutdownCallback interface {
-	OnShutdown(ctx context.Context) error
+	OnShutdown(context.Context) error
 }
 
 // ShutdownFunc is a helper type, so you can easily provide anonymous functions

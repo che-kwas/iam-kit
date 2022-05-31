@@ -5,64 +5,81 @@ import (
 	"context"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/che-kwas/iam-kit/shutdown"
 )
 
+// Servable defines the behavior of a server.
 type Servable interface {
 	Run() error
-	Shutdown(ctx context.Context) error
+	Shutdown(context.Context) error
 }
 
+// Server defines the structure of a server.
 type Server struct {
-	name       string
-	httpServer *HTTPServer
-	grpcServer *GRPCServer
+	Name       string
+	HTTPServer *HTTPServer
+	GRPCServer *GRPCServer
 	gs         *shutdown.GracefulShutdown
 
-	// err is used to eliminate error checking hell
 	err error
 }
 
-func NewServer(name string) (*Server, error) {
-	server := &Server{
-		name: name,
-		gs:   shutdown.New(10 * time.Second),
-	}
-	server.buildHTTP().buildGRPC()
+// Option configures the server.
+type Option interface {
+	apply(*Server)
+}
 
-	return server, server.err
+// optionFunc wraps a func so it satisfies the Option interface.
+type optionFunc func(*Server)
+
+func (o optionFunc) apply(s *Server) {
+	o(s)
+}
+
+func NewServer(name string, opts ...Option) (*Server, error) {
+	gs := shutdown.New(10 * time.Second)
+
+	httpS, err := NewHTTPServer()
+	if err != nil {
+		return nil, err
+	}
+	gs.AddShutdownCallback(shutdown.ShutdownFunc(httpS.Shutdown))
+
+	s := &Server{
+		Name:       name,
+		HTTPServer: httpS,
+		gs:         gs,
+	}
+
+	for _, opt := range opts {
+		opt.apply(s)
+	}
+
+	return s, s.err
+}
+
+func WithGRPC() Option {
+	return optionFunc(func(s *Server) {
+		if s.err != nil {
+			return
+		}
+
+		s.GRPCServer, s.err = NewGRPCServer()
+		if s.err == nil {
+			s.gs.AddShutdownCallback(shutdown.ShutdownFunc(s.GRPCServer.Shutdown))
+		}
+	})
 }
 
 func (s *Server) Run() error {
 	var eg errgroup.Group
-	eg.Go(s.grpcServer.Run)
-	eg.Go(s.httpServer.Run)
+	eg.Go(s.HTTPServer.Run)
+	if s.GRPCServer != nil {
+		eg.Go(s.GRPCServer.Run)
+	}
 
 	s.gs.Start()
 	return eg.Wait()
-}
-
-func (s *Server) InitRouter(initFunc func(g *gin.Engine)) {
-	initFunc(s.httpServer.Engine)
-}
-
-func (s *Server) buildHTTP() *Server {
-	s.httpServer, s.err = NewHTTPServer()
-	s.gs.AddShutdownCallback(shutdown.ShutdownFunc(s.httpServer.Shutdown))
-
-	return s
-}
-
-func (s *Server) buildGRPC() *Server {
-	if s.err != nil {
-		return s
-	}
-
-	s.grpcServer, s.err = NewGRPCServer()
-	s.gs.AddShutdownCallback(shutdown.ShutdownFunc(s.grpcServer.Shutdown))
-
-	return s
 }
