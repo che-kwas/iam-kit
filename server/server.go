@@ -31,10 +31,10 @@ type Option interface {
 	apply(*Server)
 }
 
-// optionFunc wraps a func so it satisfies the Option interface.
-type optionFunc func(*Server)
+// OptionFunc wraps a func so it satisfies the Option interface.
+type OptionFunc func(*Server)
 
-func (o optionFunc) apply(s *Server) {
+func (o OptionFunc) apply(s *Server) {
 	o(s)
 }
 
@@ -61,7 +61,7 @@ func NewServer(name string, opts ...Option) (*Server, error) {
 }
 
 func WithGRPC() Option {
-	return optionFunc(func(s *Server) {
+	return OptionFunc(func(s *Server) {
 		if s.err != nil {
 			return
 		}

@@ -27,15 +27,18 @@ type Secret struct {
 	Expires  int64
 }
 
+// GetSecretFunc is a type of func for getting the Secret.
+type GetSecretFunc func(kid string) (Secret, error)
+
 // JWTExStrategy defines jwt bearer authentication strategy with user-specific secret.
 type JWTExStrategy struct {
-	get func(kid string) (Secret, error)
+	get GetSecretFunc
 }
 
 var _ middleware.AuthStrategy = &JWTExStrategy{}
 
 // NewJWTExStrategy creates a jwt strategy.
-func NewJWTExStrategy(get func(kid string) (Secret, error)) JWTExStrategy {
+func NewJWTExStrategy(get GetSecretFunc) JWTExStrategy {
 	return JWTExStrategy{get}
 }
 
