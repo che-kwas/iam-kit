@@ -7,8 +7,6 @@ import (
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 // Defines common log fields.
@@ -17,27 +15,11 @@ const (
 	KeyUsername  string = "username"
 )
 
-// Defines config default values.
-const (
-	confKey = "log"
-
-	defaultLevel      = "debug"
-	defaultEncoding   = "console"
-	defaultOutputPath = "/var/log/iam-apiserver/iam-apiserver.log"
-	defaultMaxSize    = 100
-	defaultMaxAge     = 30
-)
-
 // LogOptions defines options for building a logger.
 type LogOptions struct {
 	Name          string
-	Level         string
-	Encoding      string
-	DisableCaller bool   `mapstructure:"disable-caller"`
-	OutputPath    string `mapstructure:"output-path"`
-	MaxSize       int    `mapstructure:"max-size"`
-	MaxAge        int    `mapstructure:"max-age"`
-	MaxBackups    int    `mapstructure:"max-backups"`
+	Development   bool
+	DisableCaller bool `mapstructure:"disable-caller"`
 }
 
 type Logger struct {
@@ -55,7 +37,15 @@ func NewLogger() *Logger {
 func NewGormLogger() *Logger {
 	opts, _ := getLogOpts()
 	opts.Name = "gorm"
-	opts.Level = "info"
+	opts.Development = false
+
+	return newLoggerWithOpts(opts)
+}
+
+// NewGinLogger creates a gin logger.
+func NewGinLogger() *Logger {
+	opts, _ := getLogOpts()
+	opts.Name = "gin"
 	opts.DisableCaller = true
 
 	return newLoggerWithOpts(opts)
@@ -90,12 +80,15 @@ func (l *Logger) Printf(format string, args ...interface{}) {
 }
 
 func newLoggerWithOpts(opts *LogOptions) *Logger {
-	encoder := newEncoder(opts.Encoding)
-	ws := newWriteSyncer(opts)
-	lv := newLevel(opts.Level)
+	var cfg zap.Config
+	if opts.Development {
+		cfg = zap.NewDevelopmentConfig()
+	} else {
+		cfg = zap.NewProductionConfig()
+	}
+	cfg.DisableCaller = opts.DisableCaller
 
-	core := zapcore.NewCore(encoder, ws, lv)
-	zaplog := zap.New(core, zap.WithCaller(!opts.DisableCaller))
+	zaplog, _ := cfg.Build()
 	logger := &Logger{zaplog.Sugar().Named(opts.Name)}
 	logger.Debugf("new logger with options: %+v", opts)
 
@@ -103,48 +96,9 @@ func newLoggerWithOpts(opts *LogOptions) *Logger {
 }
 
 func getLogOpts() (*LogOptions, error) {
-	opts := &LogOptions{
-		Level:      defaultLevel,
-		Encoding:   defaultEncoding,
-		OutputPath: defaultOutputPath,
-		MaxSize:    defaultMaxSize,
-		MaxAge:     defaultMaxAge,
-	}
-
-	if err := viper.UnmarshalKey(confKey, opts); err != nil {
+	opts := &LogOptions{Development: true}
+	if err := viper.UnmarshalKey("log", opts); err != nil {
 		return nil, err
 	}
 	return opts, nil
-}
-
-func newEncoder(encoding string) zapcore.Encoder {
-	cfg := zap.NewProductionEncoderConfig()
-	cfg.EncodeTime = zapcore.ISO8601TimeEncoder
-	cfg.EncodeLevel = zapcore.CapitalLevelEncoder
-
-	if encoding == "console" {
-		return zapcore.NewConsoleEncoder(cfg)
-	}
-
-	return zapcore.NewJSONEncoder(cfg)
-}
-
-func newWriteSyncer(opts *LogOptions) zapcore.WriteSyncer {
-	logger := &lumberjack.Logger{
-		Filename:   opts.OutputPath,
-		MaxSize:    opts.MaxSize,
-		MaxAge:     opts.MaxAge,
-		MaxBackups: opts.MaxBackups,
-	}
-
-	return zapcore.AddSync(logger)
-}
-
-func newLevel(l string) zapcore.Level {
-	var level zapcore.Level
-	if err := level.UnmarshalText([]byte(l)); err != nil {
-		level = zapcore.InfoLevel
-	}
-
-	return level
 }

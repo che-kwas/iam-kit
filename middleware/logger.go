@@ -11,6 +11,8 @@ import (
 
 // Logger returns a middleware that adds requestID and username to the loggin context.
 func Logger() gin.HandlerFunc {
+	log := logger.NewGinLogger()
+
 	return func(c *gin.Context) {
 		// Start timer
 		start := time.Now()
@@ -22,7 +24,6 @@ func Logger() gin.HandlerFunc {
 
 		param := gin.LogFormatterParams{
 			Request: c.Request,
-			Keys:    c.Keys,
 		}
 
 		// Stop timer
@@ -34,20 +35,16 @@ func Logger() gin.HandlerFunc {
 		param.StatusCode = c.Writer.Status()
 		param.ErrorMessage = c.Errors.ByType(gin.ErrorTypePrivate).String()
 
-		param.BodySize = c.Writer.Size()
-
 		if raw != "" {
 			path = path + "?" + raw
 		}
-
 		param.Path = path
 
-		logger.L().X(c).Info(formatLogParams(param))
+		log.X(c).Info(formatLogParams(param))
 	}
 }
 
 func formatLogParams(param gin.LogFormatterParams) string {
-
 	return fmt.Sprintf("%3d - [%s] \"%v %s %s\" %s",
 		param.StatusCode,
 		param.ClientIP,
