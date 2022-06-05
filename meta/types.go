@@ -97,8 +97,8 @@ type ListMeta struct {
 // ListOptions is the query options to a standard REST list call.
 type ListOptions struct {
 	// Offset specify the number of records to skip before starting to return the records.
-	Offset *int `json:"offset,omitempty"`
+	Offset *int `json:"offset,omitempty" form:"offset,omitempty"`
 
 	// Limit specify the number of records to be retrieved.
-	Limit *int `json:"limit,omitempty"`
+	Limit *int `json:"limit,omitempty" form:"limit,omitempty"`
 }
