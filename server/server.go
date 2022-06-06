@@ -73,6 +73,16 @@ func WithGRPC() Option {
 	})
 }
 
+func WithShutdown(sd shutdown.ShutdownFunc) Option {
+	return OptionFunc(func(s *Server) {
+		if s.err != nil {
+			return
+		}
+
+		s.gs.AddShutdownCallback(sd)
+	})
+}
+
 func (s *Server) Run() error {
 	var eg errgroup.Group
 	eg.Go(s.HTTPServer.Run)
