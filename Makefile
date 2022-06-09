@@ -40,6 +40,12 @@ cover: test
 	sed -i '/mock_.*.go/d' coverage.out
 	go tool cover -html=coverage.out -o coverage.html
 
+## update: Update all modules.
+.PHONY: update
+update:
+	go get -u ./...
+	go mod tidy -compat=1.17
+
 ## clean: Remove all files that are created by building.
 .PHONY: clean
 clean:
