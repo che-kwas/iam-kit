@@ -26,14 +26,9 @@
 
 ## TODO
 
-- errors最佳实践
-
-6. test
-7. policy audit
-8. migrate
-9. metrics
-10. profiling
-11. version
-12. list selector
-13. server可以只创建http/grpc server
-16. validate
+- test
+- metrics
+- profiling
+- version
+- validate
+- README
