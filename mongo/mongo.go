@@ -14,12 +14,13 @@ import (
 const (
 	confKey = "mongo"
 
-	defaultURI = "mongodb://localhost:27017"
+	defaultMaxPoolSize = 100
 )
 
 // MongoOptions defines options for building a mongo client.
 type MongoOptions struct {
-	URI string
+	URI         string
+	MaxPoolSize uint64 `mapstructure:"max-pool-size"`
 }
 
 // NewMongoIns creates a mongo client.
@@ -30,14 +31,14 @@ func NewMongoIns(ctx context.Context) (*mongo.Client, error) {
 	}
 	logger.L().Debugf("new mongo instance with options: %+v", opts)
 
-	mgoOpts := options.Client().ApplyURI(opts.URI)
+	mgoOpts := options.Client().ApplyURI(opts.URI).SetMaxPoolSize(opts.MaxPoolSize)
 
 	return mongo.Connect(ctx, mgoOpts)
 }
 
 func getMongoOpts() (*MongoOptions, error) {
 	opts := &MongoOptions{
-		URI: defaultURI,
+		MaxPoolSize: defaultMaxPoolSize,
 	}
 
 	if err := viper.UnmarshalKey(confKey, opts); err != nil {
