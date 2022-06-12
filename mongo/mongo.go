@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 
 	"github.com/che-kwas/iam-kit/logger"
 )
@@ -32,8 +33,16 @@ func NewMongoIns(ctx context.Context) (*mongo.Client, error) {
 	logger.L().Debugf("new mongo instance with options: %+v", opts)
 
 	mgoOpts := options.Client().ApplyURI(opts.URI).SetMaxPoolSize(opts.MaxPoolSize)
+	cli, err := mongo.Connect(ctx, mgoOpts)
+	if err != nil {
+		return nil, err
+	}
 
-	return mongo.Connect(ctx, mgoOpts)
+	if err := cli.Ping(ctx, readpref.Primary()); err != nil {
+		return nil, err
+	}
+
+	return cli, nil
 }
 
 func getMongoOpts() (*MongoOptions, error) {
