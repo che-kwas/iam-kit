@@ -20,7 +20,7 @@ type ErrResponse struct {
 // WriteResponse writes the response data or an error into HTTP reponse.
 func WriteResponse(c *gin.Context, err error, data interface{}) {
 	if err != nil {
-		logger.L().X(c).Errorw("response", "error", err)
+		logger.L().X(c).Errorf("response error: %v", err)
 		coder := errors.ParseCoder(err)
 
 		c.JSON(coder.HTTPStatus(), ErrResponse{
@@ -31,6 +31,6 @@ func WriteResponse(c *gin.Context, err error, data interface{}) {
 		return
 	}
 
-	logger.L().X(c).Infow("response", "data", data)
+	logger.L().X(c).Infof("response data: %v", data)
 	c.JSON(http.StatusOK, data)
 }
