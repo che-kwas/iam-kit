@@ -54,6 +54,7 @@ func NewMysqlIns() (*gorm.DB, error) {
 	cfg := &gorm.Config{Logger: newLogger(opts.SlowThreshold, opts.LogLevel)}
 	db, err := gorm.Open(mysql.Open(dsn), cfg)
 	if err != nil {
+		err = fmt.Errorf("failed to build mysql instance: %s", err.Error())
 		return nil, err
 	}
 

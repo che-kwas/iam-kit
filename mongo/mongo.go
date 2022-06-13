@@ -3,7 +3,7 @@ package mongo // import "github.com/che-kwas/iam-kit/mongo"
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"time"
 
 	"github.com/spf13/viper"
@@ -57,10 +57,7 @@ func NewMongoIns() (*mongo.Client, error) {
 	}
 
 	if err != nil {
-		if err == ctx.Err() {
-			err = errors.New("connect to mongo timeout")
-		}
-
+		err = fmt.Errorf("failed to build mongo instance: %s", err.Error())
 		return nil, err
 	}
 
