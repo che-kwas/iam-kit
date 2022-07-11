@@ -138,7 +138,7 @@ func (s *HTTPServer) setupAPIs() {
 
 func (s *HTTPServer) ping(ctx context.Context) error {
 	url := fmt.Sprintf("http://%s%s", s.addr, routerHealthz)
-	url = strings.Replace(url, "0.0.0.0", "127.0.0.1", 1)
+	url = strings.Replace(url, "0.0.0.0", "localhost", 1)
 
 	for {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)

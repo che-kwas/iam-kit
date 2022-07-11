@@ -15,7 +15,7 @@ import (
 const (
 	confKey = "redis"
 
-	defaultAddr     = "127.0.0.1:6379"
+	defaultAddr     = "localhost:6379"
 	defaultDatabase = 0
 	defaultTimeout  = time.Duration(5 * time.Second)
 )

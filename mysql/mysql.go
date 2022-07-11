@@ -15,7 +15,7 @@ import (
 const (
 	confKey = "mysql"
 
-	defaultAddr            = "127.0.0.1:3306"
+	defaultAddr            = "localhost:3306"
 	defaultMaxIdleConns    = 100
 	defaultMaxOpenConns    = 100
 	defaultMaxConnLifeTime = time.Duration(10 * time.Second)

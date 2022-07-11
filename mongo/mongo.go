@@ -17,7 +17,7 @@ import (
 const (
 	confKey = "mongo"
 
-	defaultURI         = "mongodb://127.0.0.1:27017"
+	defaultURI         = "mongodb://localhost:27017"
 	defaultTimeout     = time.Duration(5 * time.Second)
 	defaultMaxPoolSize = 100
 )

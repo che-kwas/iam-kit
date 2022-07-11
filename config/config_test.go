@@ -21,7 +21,7 @@ func Test_NewConfig_FromCfgPath(t *testing.T) {
 	viper.Reset()
 	err := LoadConfig("./config_test.yaml", "")
 	assert.Nil(err)
-	assert.Equal("127.0.0.1:7777", viper.Get("http.addr"))
+	assert.Equal("localhost:7777", viper.Get("http.addr"))
 }
 
 func Test_NewConfig_FromAppName(t *testing.T) {
@@ -30,5 +30,5 @@ func Test_NewConfig_FromAppName(t *testing.T) {
 	viper.Reset()
 	err := LoadConfig("", "config_test")
 	assert.Nil(err)
-	assert.Equal("127.0.0.1:7777", viper.Get("http.addr"))
+	assert.Equal("localhost:7777", viper.Get("http.addr"))
 }
